@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +23,7 @@ import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.Text
 
 @Composable
-fun HorizontalBookCard(
+fun HorizontalBookItem(
     book: Book,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -32,12 +31,12 @@ fun HorizontalBookCard(
 ) {
     Row(
         modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(FluentTheme.shapes.control)
             .let {
                 if (alternate) {
                     it.background(
                         color = FluentTheme.colors.background.card.default,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = FluentTheme.shapes.control
                     )
                 } else {
                     it
@@ -58,7 +57,7 @@ fun HorizontalBookCard(
             modifier = Modifier
                 .width(120.dp)
                 .aspectRatio(2f / 3f)
-                .clip(RoundedCornerShape(4.dp)),
+                .clip(FluentTheme.shapes.control),
             contentScale = ContentScale.Crop
         )
         Spacer(Modifier.width(12.dp))
@@ -93,9 +92,9 @@ fun HorizontalBookCard(
 
 @Composable
 @Preview
-private fun HorizontalBookCardPreview() {
+private fun HorizontalBookItemPreview() {
     AppTheme {
-        HorizontalBookCard(
+        HorizontalBookItem(
             book = Book.dummies[0]
         )
     }

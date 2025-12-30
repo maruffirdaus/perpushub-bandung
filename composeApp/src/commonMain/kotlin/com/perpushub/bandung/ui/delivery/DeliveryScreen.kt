@@ -16,6 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.perpushub.bandung.ui.common.component.Header
 import com.perpushub.bandung.ui.theme.AppTheme
+import io.github.composefluent.component.ContentDialog
+import io.github.composefluent.component.ContentDialogButton
+import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.Text
@@ -29,14 +32,32 @@ fun DeliveryScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DeliveryScreenContent(
-        uiState = uiState
+        uiState = uiState,
+        onErrorMessageClear = viewModel::clearErrorMessage
     )
 }
 
 @Composable
 fun DeliveryScreenContent(
-    uiState: DeliveryUiState
+    uiState: DeliveryUiState,
+    onErrorMessageClear: () -> Unit
 ) {
+    ContentDialog(
+        title = "Terjadi kesalahan",
+        visible = uiState.errorMessage != null,
+        content = {
+            Text("${uiState.errorMessage}")
+        },
+        primaryButtonText = "Tutup",
+        onButtonClick = {
+            when (it) {
+                ContentDialogButton.Primary -> onErrorMessageClear()
+                else -> {}
+            }
+        },
+        size = DialogSize.Min
+    )
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -80,7 +101,8 @@ fun DeliveryScreenContent(
 private fun DeliveryScreenPreview() {
     AppTheme {
         DeliveryScreenContent(
-            uiState = DeliveryUiState()
+            uiState = DeliveryUiState(),
+            onErrorMessageClear = {}
         )
     }
 }

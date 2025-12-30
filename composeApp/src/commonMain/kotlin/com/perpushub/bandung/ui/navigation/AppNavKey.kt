@@ -5,35 +5,20 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
-object AppNavKey {
+@Serializable
+sealed interface AppNavKey : NavKey {
     @Serializable
-    object Home : NavKey
+    object Auth : AppNavKey, NavKey
 
     @Serializable
-    data class BookDetail(
-        val id: Int
-    ) : NavKey
+    object Main : AppNavKey, NavKey
 
-    @Serializable
-    object Borrowing : NavKey
-
-    @Serializable
-    object Delivery : NavKey
-
-    @Serializable
-    object History : NavKey
-
-    @Serializable
-    object Profile : NavKey
-
-    val serializersModule = SerializersModule {
-        polymorphic(NavKey::class) {
-            subclass(Home::class, Home.serializer())
-            subclass(BookDetail::class, BookDetail.serializer())
-            subclass(Borrowing::class, Borrowing.serializer())
-            subclass(Delivery::class, Delivery.serializer())
-            subclass(History::class, History.serializer())
-            subclass(Profile::class, Profile.serializer())
+    companion object {
+        val serializersModule = SerializersModule {
+            polymorphic(NavKey::class) {
+                subclass(Auth::class, Auth.serializer())
+                subclass(Main::class, Main.serializer())
+            }
         }
     }
 }

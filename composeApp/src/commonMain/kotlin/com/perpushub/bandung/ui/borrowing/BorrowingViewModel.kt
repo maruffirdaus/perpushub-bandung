@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRepository
+import com.perpushub.bandung.service.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -18,6 +19,7 @@ import ovh.plrapps.mapcompose.ui.state.MapState
 import kotlin.math.pow
 
 class BorrowingViewModel(
+    private val sessionManager: SessionManager,
     private val loanRepository: LoanRepository,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
@@ -51,16 +53,28 @@ class BorrowingViewModel(
         }.apply {
             addLayer(tileStreamProvider)
         }
+
+        viewModelScope.launch {
+            sessionManager.session.collect { session ->
+                if (session == null) {
+                    _uiState.update {
+                        it.copy(errorMessage = "Masuk untuk melanjutkan")
+                    }
+                }
+            }
+        }
     }
 
     private fun loadInitialData() {
+        val userId = sessionManager.session.value?.userId ?: return
+
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             _uiState.update {
                 it.copy(
-                    loanRequests = loanRepository.getLoanRequests(0),
+                    loanRequests = loanRepository.getLoanRequests(userId),
                     libraries = libraryRepository.getLibraries()
                 )
             }
@@ -85,19 +99,25 @@ class BorrowingViewModel(
     }
 
     fun deleteLoanRequest(id: Int) {
+        val userId = sessionManager.session.value?.userId ?: return
+
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             loanRepository.deleteLoanRequest(id)
             _uiState.update {
-                it.copy(
-                    loanRequests = loanRepository.getLoanRequests(0)
-                )
+                it.copy(loanRequests = loanRepository.getLoanRequests(userId))
             }
             _uiState.update {
                 it.copy(isLoading = false)
             }
+        }
+    }
+
+    fun clearErrorMessage() {
+        _uiState.update {
+            it.copy(errorMessage = null)
         }
     }
 }

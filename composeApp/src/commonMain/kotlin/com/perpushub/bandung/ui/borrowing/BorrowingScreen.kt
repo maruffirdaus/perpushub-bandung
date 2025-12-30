@@ -19,11 +19,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
-import com.perpushub.bandung.ui.borrowing.component.LoanRequestCard
+import com.perpushub.bandung.common.model.LibraryDetail
+import com.perpushub.bandung.ui.borrowing.component.LoanRequestItem
 import com.perpushub.bandung.ui.borrowing.component.SelectLibraryDialog
 import com.perpushub.bandung.ui.common.component.Header
-import com.perpushub.bandung.ui.navigation.AppNavKey
+import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
+import io.github.composefluent.component.ContentDialog
+import io.github.composefluent.component.ContentDialogButton
+import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.Text
@@ -42,6 +46,7 @@ fun BorrowingScreen(
         uiState = uiState,
         onSelectLibraryDialogDataRefresh = viewModel::refreshSelectLibraryDialogData,
         onLoanRequestDelete = viewModel::deleteLoanRequest,
+        onErrorMessageClear = viewModel::clearErrorMessage,
         onNavigate = onNavigate,
         mapState = viewModel.mapState
     )
@@ -52,9 +57,26 @@ fun BorrowingScreenContent(
     uiState: BorrowingUiState,
     onSelectLibraryDialogDataRefresh: (Int) -> Unit,
     onLoanRequestDelete: (Int) -> Unit,
+    onErrorMessageClear: () -> Unit,
     onNavigate: (NavKey) -> Unit,
     mapState: MapState? = null
 ) {
+    ContentDialog(
+        title = "Terjadi kesalahan",
+        visible = uiState.errorMessage != null,
+        content = {
+            Text("${uiState.errorMessage}")
+        },
+        primaryButtonText = "Tutup",
+        onButtonClick = {
+            when (it) {
+                ContentDialogButton.Primary -> onErrorMessageClear()
+                else -> {}
+            }
+        },
+        size = DialogSize.Min
+    )
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -90,7 +112,7 @@ fun BorrowingScreenContent(
                         }
                     } else {
                         itemsIndexed(uiState.loanRequests) { index, loanRequest ->
-                            var selectedLibraryId: Int? by remember { mutableStateOf(null) }
+                            var selectedLibrary: LibraryDetail? by remember { mutableStateOf(null) }
                             var isSelectLibraryDialogOpen by remember { mutableStateOf(false) }
 
                             SelectLibraryDialog(
@@ -98,16 +120,19 @@ fun BorrowingScreenContent(
                                 libraries = uiState.libraries,
                                 visible = isSelectLibraryDialogOpen,
                                 loading = uiState.isSelectLibraryDialogLoading,
+                                onSelectClick = {
+                                    selectedLibrary = it
+                                },
                                 onDismissRequest = {
                                     isSelectLibraryDialogOpen = false
                                 },
                                 mapState = mapState
                             )
-                            LoanRequestCard(
+                            LoanRequestItem(
                                 loanRequest = loanRequest,
-                                selectedLibrary = uiState.libraries.find { it.id == selectedLibraryId }?.name,
-                                onCardClick = {
-                                    onNavigate(AppNavKey.BookDetail(loanRequest.book.id))
+                                selectedLibrary = selectedLibrary?.name,
+                                onItemClick = {
+                                    onNavigate(MainNavKey.BookDetail(loanRequest.book.id))
                                 },
                                 onSelectLibraryClick = {
                                     isSelectLibraryDialogOpen = true
@@ -137,6 +162,7 @@ private fun BorrowingScreenPreview() {
             uiState = BorrowingUiState(),
             onSelectLibraryDialogDataRefresh = {},
             onLoanRequestDelete = {},
+            onErrorMessageClear = {},
             onNavigate = {}
         )
     }

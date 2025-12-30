@@ -22,7 +22,7 @@ data class LibraryDetail(
                 address = "Jl. Majapahit, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115",
                 latitude = -6.8995654,
                 longitude = 107.5882642
-            ),
+            )
         )
     }
 }

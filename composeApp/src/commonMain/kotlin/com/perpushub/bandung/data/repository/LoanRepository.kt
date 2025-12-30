@@ -9,31 +9,29 @@ import ovh.plrapps.mapcompose.utils.removeFirst
 import kotlin.time.Duration.Companion.seconds
 
 class LoanRepository {
-    private val loanRequest: MutableList<LoanRequest> = mutableListOf()
-
     suspend fun addLoanRequest(userId: Int, bookId: Int): Int {
-        delay(0.5.seconds)
-        loanRequest += LoanRequest(
-            id = loanRequest.size,
+        delay(0.25.seconds)
+        LoanRequest.dummies += LoanRequest(
+            id = LoanRequest.dummies.size,
             userId = userId,
             book = Book.dummies[bookId],
             requestAt = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault()).toString()
         )
-        return loanRequest.lastIndex
+        return LoanRequest.dummies.lastIndex
     }
 
     suspend fun getLoanRequests(userId: Int): List<LoanRequest> {
-        delay(0.5.seconds)
-        return loanRequest.filter { it.userId == userId }.reversed()
+        delay(0.25.seconds)
+        return LoanRequest.dummies.filter { it.userId == userId }.reversed()
     }
 
     suspend fun getLoanRequest(id: Int): LoanRequest? {
-        delay(0.5.seconds)
-        return loanRequest.find { it.id == id }
+        delay(0.25.seconds)
+        return LoanRequest.dummies.find { it.id == id }
     }
 
     suspend fun deleteLoanRequest(id: Int) {
-        delay(0.5.seconds)
-        loanRequest.removeFirst { it.id == id }
+        delay(0.25.seconds)
+        LoanRequest.dummies.removeFirst { it.id == id }
     }
 }

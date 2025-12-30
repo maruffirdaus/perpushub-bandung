@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LoanRepository
+import com.perpushub.bandung.service.session.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 
 class BookDetailViewModel(
     private val id: Int,
+    private val sessionManager: SessionManager,
     private val bookRepository: BookRepository,
     private val loanRepository: LoanRepository
 ) : ViewModel() {
@@ -24,6 +26,16 @@ class BookDetailViewModel(
             SharingStarted.WhileSubscribed(5000L),
             BookDetailUiState()
         )
+
+    init {
+        viewModelScope.launch {
+            sessionManager.session.collect { session ->
+                _uiState.update {
+                    it.copy(isLoggedIn = session != null)
+                }
+            }
+        }
+    }
 
     private fun loadInitialData() {
         viewModelScope.launch {
@@ -43,15 +55,30 @@ class BookDetailViewModel(
     }
 
     fun borrow(onSuccess: () -> Unit) {
+        if (sessionManager.session.value == null) {
+            _uiState.update {
+                it.copy(errorMessage = "Masuk untuk melanjutkan")
+            }
+            return
+        }
+
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            loanRepository.addLoanRequest(0, id)
-            onSuccess()
+            sessionManager.session.value?.userId?.let { userId ->
+                loanRepository.addLoanRequest(userId, id)
+                onSuccess()
+            }
             _uiState.update {
                 it.copy(isLoading = false)
             }
+        }
+    }
+
+    fun clearErrorMessage() {
+        _uiState.update {
+            it.copy(errorMessage = null)
         }
     }
 }

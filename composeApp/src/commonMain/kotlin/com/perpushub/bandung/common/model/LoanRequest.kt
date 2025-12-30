@@ -5,4 +5,8 @@ data class LoanRequest(
     val userId: Int,
     val book: Book,
     val requestAt: String
-)
+) {
+    companion object {
+        val dummies = mutableListOf<LoanRequest>()
+    }
+}

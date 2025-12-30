@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +23,7 @@ import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.Text
 
 @Composable
-fun VerticalBookCard(
+fun VerticalBookItem(
     book: Book,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -33,7 +32,7 @@ fun VerticalBookCard(
     Column(
         modifier = modifier
             .width(width)
-            .clip(RoundedCornerShape(4.dp))
+            .clip(FluentTheme.shapes.control)
             .let {
                 if (onClick != null) {
                     it.clickable(onClick = onClick)
@@ -49,7 +48,7 @@ fun VerticalBookCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2f / 3f)
-                .clip(RoundedCornerShape(4.dp)),
+                .clip(FluentTheme.shapes.control),
             contentScale = ContentScale.Crop
         )
         Spacer(Modifier.height(4.dp))
@@ -74,9 +73,9 @@ fun VerticalBookCard(
 
 @Composable
 @Preview
-private fun VerticalBookCardPreview() {
+private fun VerticalBookItemPreview() {
     AppTheme {
-        VerticalBookCard(
+        VerticalBookItem(
             book = Book.dummies[0]
         )
     }

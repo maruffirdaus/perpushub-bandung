@@ -5,48 +5,43 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import androidx.navigation3.runtime.NavKey
-import com.github.terrakok.navigation3.browser.ChronologicalBrowserNavigation
+import com.github.terrakok.navigation3.browser.HierarchicalBrowserNavigation
 import com.github.terrakok.navigation3.browser.buildBrowserHistoryFragment
-import com.github.terrakok.navigation3.browser.getBrowserHistoryFragmentName
-import com.github.terrakok.navigation3.browser.getBrowserHistoryFragmentParameters
 import com.perpushub.bandung.ui.navigation.AppNavKey
+import com.perpushub.bandung.ui.navigation.main.MainNavKey
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport {
-        val backStack = remember { mutableStateListOf<NavKey>(AppNavKey.Home) }
-        ChronologicalBrowserNavigation(
-            backStack = backStack,
-            saveKey = { key ->
-                when (key) {
-                    is AppNavKey.Home -> buildBrowserHistoryFragment("home")
-                    is AppNavKey.BookDetail -> buildBrowserHistoryFragment("book-detail", mapOf("id" to key.id.toString()))
-                    is AppNavKey.Borrowing -> buildBrowserHistoryFragment("borrowing")
-                    is AppNavKey.Delivery -> buildBrowserHistoryFragment("delivery")
-                    is AppNavKey.History -> buildBrowserHistoryFragment("history")
-                    is AppNavKey.Profile -> buildBrowserHistoryFragment("profile")
-                    else -> null
+        val appBackStack = remember { mutableStateListOf<NavKey>(AppNavKey.Main) }
+        val mainBackStack = remember { mutableStateListOf<NavKey>(MainNavKey.Home) }
+
+        HierarchicalBrowserNavigation {
+            when (appBackStack.lastOrNull()) {
+                is AppNavKey.Auth -> buildBrowserHistoryFragment("auth")
+                is AppNavKey.Main -> {
+                    when (val mainNavKey = mainBackStack.lastOrNull()) {
+                        is MainNavKey.Home -> buildBrowserHistoryFragment("home")
+                        is MainNavKey.BookDetail -> buildBrowserHistoryFragment(
+                            "book-detail",
+                            mapOf("id" to mainNavKey.id.toString())
+                        )
+
+                        is MainNavKey.Borrowing -> buildBrowserHistoryFragment("borrowing")
+                        is MainNavKey.Delivery -> buildBrowserHistoryFragment("delivery")
+                        is MainNavKey.History -> buildBrowserHistoryFragment("history")
+                        is MainNavKey.Profile -> buildBrowserHistoryFragment("profile")
+                        else -> null
+                    }
                 }
-            },
-            restoreKey = { fragment ->
-                when (getBrowserHistoryFragmentName(fragment)) {
-                    "root" -> AppNavKey.Home
-                    "home" -> AppNavKey.Home
-                    "book-detail" -> AppNavKey.BookDetail(
-                        getBrowserHistoryFragmentParameters(fragment).getValue("id")?.toInt()
-                            ?: error("id is required")
-                    )
-                    "borrowing" -> AppNavKey.Borrowing
-                    "delivery" -> AppNavKey.Delivery
-                    "history" -> AppNavKey.History
-                    "profile" -> AppNavKey.Profile
-                    else -> null
-                }
+
+                else -> null
             }
-        )
+        }
         App(
             backButtonEnabled = false,
-            backStack = backStack
+            appBackStack = appBackStack,
+            mainBackStack = mainBackStack
         )
     }
 }

@@ -30,10 +30,10 @@ import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
 import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.ui.common.component.Header
-import com.perpushub.bandung.ui.home.component.HorizontalBookCard
+import com.perpushub.bandung.ui.home.component.HorizontalBookItem
 import com.perpushub.bandung.ui.home.component.HorizontalList
-import com.perpushub.bandung.ui.home.component.VerticalBookCard
-import com.perpushub.bandung.ui.navigation.AppNavKey
+import com.perpushub.bandung.ui.home.component.VerticalBookItem
+import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.Icon
@@ -177,22 +177,22 @@ private fun ColumnScope.BookSearchSection(
                 bottom = 32.dp
             )
         ) {
-           if (searchedBooks.isEmpty()) {
-               item {
-                   Text("Buku dengan kata kunci \"${searchQuery}\" tidak ditemukan.")
-               }
-           } else {
-               itemsIndexed(searchedBooks) { index, book ->
-                   HorizontalBookCard(
-                       book = book,
-                       onClick = {
-                           onNavigate(AppNavKey.BookDetail(book.id))
-                       },
-                       modifier = Modifier.fillMaxWidth(),
-                       alternate = index % 2 == 0
-                   )
-               }
-           }
+            if (searchedBooks.isEmpty()) {
+                item {
+                    Text("Buku dengan kata kunci \"${searchQuery}\" tidak ditemukan.")
+                }
+            } else {
+                itemsIndexed(searchedBooks) { index, book ->
+                    HorizontalBookItem(
+                        book = book,
+                        onClick = {
+                            onNavigate(MainNavKey.BookDetail(book.id))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        alternate = index % 2 == 0
+                    )
+                }
+            }
         }
     }
 }
@@ -218,10 +218,10 @@ private fun ColumnScope.BookDiscoverySection(
                     title = "Buku teratas",
                     items = topBooks
                 ) { book ->
-                    VerticalBookCard(
+                    VerticalBookItem(
                         book = book,
                         onClick = {
-                            onNavigate(AppNavKey.BookDetail(book.id))
+                            onNavigate(MainNavKey.BookDetail(book.id))
                         }
                     )
                 }
@@ -236,10 +236,10 @@ private fun ColumnScope.BookDiscoverySection(
                 Spacer(Modifier.height(16.dp))
             }
             itemsIndexed(recommendedBooks) { index, book ->
-                HorizontalBookCard(
+                HorizontalBookItem(
                     book = book,
                     onClick = {
-                        onNavigate(AppNavKey.BookDetail(book.id))
+                        onNavigate(MainNavKey.BookDetail(book.id))
                     },
                     modifier = Modifier
                         .fillMaxWidth()

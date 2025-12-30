@@ -15,15 +15,12 @@ data class BookDetail(
     val language: String
 ) {
     companion object {
-        val dummies = mapOf(
-            0 to BookDetail(
+        val dummies = listOf(
+            BookDetail(
                 id = 0,
                 title = "your name.",
                 authors = listOf(
-                    Author(
-                        id = 0,
-                        name = "Makoto Shinkai"
-                    )
+                    Author.dummies[0]
                 ),
                 publisher = "Yen Press LLC",
                 publishedDate = "2017-05-23",
@@ -32,22 +29,16 @@ data class BookDetail(
                 isbn13 = "9780316473095",
                 pageCount = 162,
                 categories = listOf(
-                    Category(
-                        id = 0,
-                        name = "Comics & Graphic Novels"
-                    )
+                    Category.dummies[0]
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9780316473095-L.jpg",
                 language = "en"
             ),
-            1 to BookDetail(
+            BookDetail(
                 id = 1,
                 title = "Weathering With You",
                 authors = listOf(
-                    Author(
-                        id = 0,
-                        name = "Makoto Shinkai"
-                    )
+                    Author.dummies[0]
                 ),
                 publisher = "Yen On",
                 publishedDate = "2019-12-17",
@@ -56,22 +47,16 @@ data class BookDetail(
                 isbn13 = "9781975399368",
                 pageCount = 0,
                 categories = listOf(
-                    Category(
-                        id = 0,
-                        name = "Fiction"
-                    )
+                    Category.dummies[1]
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9781975399368-L.jpg",
                 language = "en"
             ),
-            2 to BookDetail(
+            BookDetail(
                 id = 2,
                 title = "The Garden of Words",
                 authors = listOf(
-                    Author(
-                        id = 1,
-                        name = "Makoto Shinkai"
-                    )
+                    Author.dummies[0]
                 ),
                 publisher = "Vertical Inc",
                 publishedDate = "2014-10-28",
@@ -80,10 +65,7 @@ data class BookDetail(
                 isbn13 = "9781939130839",
                 pageCount = 0,
                 categories = listOf(
-                    Category(
-                        id = 0,
-                        name = "Comics & Graphic Novels"
-                    )
+                    Category.dummies[0]
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9781939130839-L.jpg",
                 language = "en"

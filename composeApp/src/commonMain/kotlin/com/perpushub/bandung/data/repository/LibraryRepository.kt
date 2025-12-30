@@ -6,7 +6,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class LibraryRepository {
     suspend fun getLibraries(): List<LibraryDetail> {
-        delay(0.5.seconds)
+        delay(0.25.seconds)
         return LibraryDetail.dummies.sortedBy { it.name }
     }
 }

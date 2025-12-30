@@ -6,51 +6,52 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.perpushub.bandung.ui.bookdetail.BookDetailScreen
-import com.perpushub.bandung.ui.borrowing.BorrowingScreen
-import com.perpushub.bandung.ui.delivery.DeliveryScreen
-import com.perpushub.bandung.ui.history.HistoryScreen
-import com.perpushub.bandung.ui.home.HomeScreen
-import com.perpushub.bandung.ui.profile.ProfileScreen
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
+import com.perpushub.bandung.ui.auth.AuthScreen
+import com.perpushub.bandung.ui.main.MainScreen
+import com.perpushub.bandung.ui.navigation.main.MainNavDisplay
+import com.perpushub.bandung.ui.navigation.main.MainNavKey
 
 @Composable
 fun AppNavDisplay(
-    backStack: List<NavKey>,
-    onNavigate: (NavKey) -> Unit
+    appBackStack: MutableList<NavKey>,
+    mainBackStack: MutableList<NavKey>,
+    backButtonEnabled: Boolean = true
 ) {
     NavDisplay(
-        backStack = backStack,
+        backStack = appBackStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<AppNavKey.Home> {
-                HomeScreen(
-                    onNavigate = onNavigate
+            entry<AppNavKey.Auth> {
+                AuthScreen(
+                    onNavigate = { key ->
+                        appBackStack[0] = key
+                    }
                 )
             }
-            entry<AppNavKey.BookDetail> { key ->
-                BookDetailScreen(
-                    onNavigate = onNavigate,
-                    viewModel = koinViewModel { parametersOf(key.id) }
+            entry<AppNavKey.Main> {
+                MainScreen(
+                    navDisplay = {
+                        MainNavDisplay(
+                            backStack = mainBackStack
+                        )
+                    },
+                    backStack = mainBackStack,
+                    onNavigate = { key ->
+                        when (key) {
+                            is AppNavKey -> appBackStack[0] = key
+                            is MainNavKey -> mainBackStack.add(key)
+                        }
+                    },
+                    onNavigateBack = {
+                        if (mainBackStack.size > 1) {
+                            mainBackStack.removeLast()
+                        }
+                    },
+                    backButtonEnabled = backButtonEnabled
                 )
-            }
-            entry<AppNavKey.Borrowing> {
-                BorrowingScreen(
-                    onNavigate = onNavigate
-                )
-            }
-            entry<AppNavKey.Delivery> {
-                DeliveryScreen()
-            }
-            entry<AppNavKey.History> {
-                HistoryScreen()
-            }
-            entry<AppNavKey.Profile> {
-                ProfileScreen()
             }
         }
     )

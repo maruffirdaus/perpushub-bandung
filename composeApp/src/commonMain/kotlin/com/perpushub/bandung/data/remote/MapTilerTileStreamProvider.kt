@@ -1,5 +1,6 @@
 package com.perpushub.bandung.data.remote
 
+import PerpusHubBandung.composeApp.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsChannel
@@ -15,7 +16,7 @@ class MapTilerTileStreamProvider(
         col: Int,
         zoomLvl: Int
     ): RawSource? {
-        val key = ""
+        val key = BuildConfig.API_KEY
         val url = "https://api.maptiler.com/maps/streets-v4/256/${zoomLvl}/${col}/${row}.png?key=${key}"
         return try {
             client.get(url).bodyAsChannel().readRemaining()

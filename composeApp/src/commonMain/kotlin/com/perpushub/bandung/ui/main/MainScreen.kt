@@ -4,14 +4,23 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
-import com.perpushub.bandung.ui.navigation.AppNavKey
+import com.perpushub.bandung.ui.main.component.LoginDialog
+import com.perpushub.bandung.ui.main.component.RegisterDialog
+import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
+import io.github.composefluent.component.ContentDialog
+import io.github.composefluent.component.ContentDialogButton
+import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.Icon
+import io.github.composefluent.component.LocalContentDialog
 import io.github.composefluent.component.MenuItem
 import io.github.composefluent.component.NavigationDefaults
 import io.github.composefluent.component.NavigationDisplayMode
@@ -23,31 +32,55 @@ import io.github.composefluent.icons.regular.BookAdd
 import io.github.composefluent.icons.regular.Box
 import io.github.composefluent.icons.regular.History
 import io.github.composefluent.icons.regular.Home
-import io.github.composefluent.icons.regular.PersonCircle
+import io.github.composefluent.icons.regular.Person
+import io.github.composefluent.icons.regular.SignOut
+import kotlinx.coroutines.launch
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun MainScreen(
     navDisplay: @Composable () -> Unit,
     backStack: List<NavKey>,
     onNavigate: (NavKey) -> Unit,
-    onBack: () -> Unit,
-    backButtonEnabled: Boolean = false
+    onNavigateBack: () -> Unit,
+    backButtonEnabled: Boolean = true,
+    viewModel: MainViewModel = koinViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     MainScreenContent(
+        uiState = uiState,
+        onLogin = viewModel::login,
+        onRegister = viewModel::register,
+        onLogout = viewModel::logout,
+        onLoginDialogOpen = viewModel::openLoginDialog,
+        onLoginDialogClose = viewModel::closeLoginDialog,
+        onRegisterDialogOpen = viewModel::openRegisterDialog,
+        onRegisterDialogClose = viewModel::closeRegisterDialog,
+        onErrorMessageClear = viewModel::clearErrorMessage,
         navDisplay = navDisplay,
         backStack = backStack,
         onNavigate = onNavigate,
-        onBack = onBack,
+        onNavigateBack = onNavigateBack,
         backButtonEnabled = backButtonEnabled
     )
 }
 
 @Composable
 fun MainScreenContent(
+    uiState: MainUiState,
+    onLogin: (String, String) -> Unit,
+    onRegister: (String, String, String, String) -> Unit,
+    onLogout: () -> Unit,
+    onLoginDialogOpen: () -> Unit,
+    onLoginDialogClose: () -> Unit,
+    onRegisterDialogOpen: () -> Unit,
+    onRegisterDialogClose: () -> Unit,
+    onErrorMessageClear: () -> Unit,
     navDisplay: @Composable () -> Unit,
     backStack: List<NavKey>,
     onNavigate: (NavKey) -> Unit,
-    onBack: () -> Unit,
+    onNavigateBack: () -> Unit,
     backButtonEnabled: Boolean = false
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -56,15 +89,52 @@ fun MainScreenContent(
     val isAtLeastExpandedBreakpoint =
         windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
+    val dialog = LocalContentDialog.current
+    val scope = rememberCoroutineScope()
+
+    LoginDialog(
+        visible = uiState.isLoginDialogOpen,
+        loading = uiState.isLoginDialogLoading,
+        onLoginClick = onLogin,
+        onRegisterClick = {
+            onLoginDialogClose()
+            onRegisterDialogOpen()
+        },
+        onDismissRequest = onLoginDialogClose
+    )
+
+    RegisterDialog(
+        visible = uiState.isRegisterDialogOpen,
+        loading = uiState.isRegisterDialogLoading,
+        onRegisterClick = onRegister,
+        onDismissRequest = onRegisterDialogClose
+    )
+
+    ContentDialog(
+        title = "Terjadi kesalahan",
+        visible = uiState.errorMessage != null,
+        content = {
+            Text("${uiState.errorMessage}")
+        },
+        primaryButtonText = "Tutup",
+        onButtonClick = {
+            when (it) {
+                ContentDialogButton.Primary -> onErrorMessageClear()
+                else -> {}
+            }
+        },
+        size = DialogSize.Min
+    )
+
     NavigationView(
         menuItems = {
             item {
-                val isSelected = backStack.lastOrNull() is AppNavKey.Home
+                val isSelected = backStack.lastOrNull() is MainNavKey.Home
 
                 MenuItem(
                     selected = isSelected,
                     onClick = {
-                        if (!isSelected) onNavigate(AppNavKey.Home)
+                        if (!isSelected) onNavigate(MainNavKey.Home)
                     },
                     text = {
                         Text("Beranda")
@@ -77,62 +147,64 @@ fun MainScreenContent(
                     }
                 )
             }
-            item {
-                val isSelected = backStack.lastOrNull() is AppNavKey.Borrowing
+            if (uiState.user != null) {
+                item {
+                    val isSelected = backStack.lastOrNull() is MainNavKey.Borrowing
 
-                MenuItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) onNavigate(AppNavKey.Borrowing)
-                    },
-                    text = {
-                        Text("Peminjaman")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Regular.BookAdd,
-                            contentDescription = "Peminjaman"
-                        )
-                    }
-                )
-            }
-            item {
-                val isSelected = backStack.lastOrNull() is AppNavKey.Delivery
+                    MenuItem(
+                        selected = isSelected,
+                        onClick = {
+                            if (!isSelected) onNavigate(MainNavKey.Borrowing)
+                        },
+                        text = {
+                            Text("Peminjaman")
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.BookAdd,
+                                contentDescription = "Peminjaman"
+                            )
+                        }
+                    )
+                }
+                item {
+                    val isSelected = backStack.lastOrNull() is MainNavKey.Delivery
 
-                MenuItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) onNavigate(AppNavKey.Delivery)
-                    },
-                    text = {
-                        Text("Pengiriman")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Regular.Box,
-                            contentDescription = "Pengiriman"
-                        )
-                    }
-                )
-            }
-            item {
-                val isSelected = backStack.lastOrNull() is AppNavKey.History
+                    MenuItem(
+                        selected = isSelected,
+                        onClick = {
+                            if (!isSelected) onNavigate(MainNavKey.Delivery)
+                        },
+                        text = {
+                            Text("Pengiriman")
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.Box,
+                                contentDescription = "Pengiriman"
+                            )
+                        }
+                    )
+                }
+                item {
+                    val isSelected = backStack.lastOrNull() is MainNavKey.History
 
-                MenuItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) onNavigate(AppNavKey.History)
-                    },
-                    text = {
-                        Text("Riwayat")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Regular.History,
-                            contentDescription = "Riwayat"
-                        )
-                    }
-                )
+                    MenuItem(
+                        selected = isSelected,
+                        onClick = {
+                            if (!isSelected) onNavigate(MainNavKey.History)
+                        },
+                        text = {
+                            Text("Riwayat")
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.History,
+                                contentDescription = "Riwayat"
+                            )
+                        }
+                    )
+                }
             }
         },
         modifier = Modifier.safeContentPadding(),
@@ -149,7 +221,7 @@ fun MainScreenContent(
         backButton = if (backButtonEnabled) {
             {
                 NavigationDefaults.BackButton(
-                    onClick = onBack,
+                    onClick = onNavigateBack,
                     disabled = backStack.size == 1
                 )
             }
@@ -157,24 +229,72 @@ fun MainScreenContent(
             {}
         },
         footerItems = {
-            item {
-                val isSelected = backStack.lastOrNull() is AppNavKey.Profile
+            if (uiState.user != null) {
+                item {
+                    val isSelected = backStack.lastOrNull() is MainNavKey.Profile
 
-                MenuItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) onNavigate(AppNavKey.Profile)
-                    },
-                    text = {
-                        Text("Profil")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Regular.PersonCircle,
-                            contentDescription = "Profil"
-                        )
-                    }
-                )
+                    MenuItem(
+                        selected = isSelected,
+                        onClick = {
+                            if (!isSelected) onNavigate(MainNavKey.Profile)
+                        },
+                        text = {
+                            Text(uiState.user.fullName)
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.Person,
+                                contentDescription = "Profil"
+                            )
+                        }
+                    )
+                }
+                item {
+                    MenuItem(
+                        selected = false,
+                        onClick = {
+                            scope.launch {
+                                val result = dialog.show(
+                                    title = "Keluar?",
+                                    contentText = "Anda akan keluar dari akun.",
+                                    primaryButtonText = "Ya",
+                                    closeButtonText = "Tidak",
+                                    size = DialogSize.Min
+                                )
+                                if (result == ContentDialogButton.Primary) {
+                                    onLogout()
+                                }
+                            }
+                        },
+                        text = {
+                            Text("Keluar")
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.SignOut,
+                                contentDescription = "Keluar"
+                            )
+                        }
+                    )
+                }
+            } else {
+                item {
+                    MenuItem(
+                        selected = false,
+                        onClick = {
+                            onLoginDialogOpen()
+                        },
+                        text = {
+                            Text("Masuk atau daftar")
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.Person,
+                                contentDescription = "Masuk atau daftar"
+                            )
+                        }
+                    )
+                }
             }
         },
         contentPadding = if (isAtLeastMediumBreakpoint) {
@@ -192,10 +312,19 @@ fun MainScreenContent(
 private fun MainScreenPreview() {
     AppTheme {
         MainScreenContent(
+            uiState = MainUiState(),
+            onLogin = { _, _ -> },
+            onRegister = { _, _, _, _ -> },
+            onLogout = {},
+            onLoginDialogOpen = {},
+            onLoginDialogClose = {},
+            onRegisterDialogOpen = {},
+            onRegisterDialogClose = {},
+            onErrorMessageClear = {},
             navDisplay = {},
             backStack = emptyList(),
             onNavigate = {},
-            onBack = {}
+            onNavigateBack = {}
         )
     }
 }

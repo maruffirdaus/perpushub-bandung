@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,10 +41,10 @@ import io.github.composefluent.component.Text
 
 @OptIn(ExperimentalFluentApi::class)
 @Composable
-fun LoanRequestCard(
+fun LoanRequestItem(
     loanRequest: LoanRequest,
     selectedLibrary: String?,
-    onCardClick: () -> Unit,
+    onItemClick: () -> Unit,
     onSelectLibraryClick: () -> Unit,
     onContinueClick: (String) -> Unit,
     onDeleteClick: () -> Unit,
@@ -61,18 +60,18 @@ fun LoanRequestCard(
 
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(FluentTheme.shapes.control)
             .let {
                 if (alternate) {
                     it.background(
                         color = FluentTheme.colors.background.card.default,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = FluentTheme.shapes.control
                     )
                 } else {
                     it
                 }
             }
-            .clickable(onClick = onCardClick)
+            .clickable(onClick = onItemClick)
             .padding(16.dp)
     ) {
         Row {
@@ -82,7 +81,7 @@ fun LoanRequestCard(
                 modifier = Modifier
                     .width(80.dp)
                     .aspectRatio(2f / 3f)
-                    .clip(RoundedCornerShape(4.dp)),
+                    .clip(FluentTheme.shapes.control),
                 contentScale = ContentScale.Crop
             )
             Spacer(Modifier.width(12.dp))
@@ -127,7 +126,11 @@ fun LoanRequestCard(
                         Button(
                             onClick = onSelectLibraryClick
                         ) {
-                            Text(selectedLibrary ?: "Pilih perpustakaan")
+                            Text(
+                                text = selectedLibrary ?: "Pilih perpustakaan",
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
                         }
                     }
                 )
@@ -139,7 +142,11 @@ fun LoanRequestCard(
                         Button(
                             onClick = {}
                         ) {
-                            Text("Pilih alamat")
+                            Text(
+                                text = "Pilih alamat",
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
                         }
                     }
                 )
@@ -199,9 +206,9 @@ fun LoanRequestCard(
 
 @Composable
 @Preview
-private fun LoanRequestCardPreview() {
+private fun LoanRequestItemPreview() {
     AppTheme {
-        LoanRequestCard(
+        LoanRequestItem(
             loanRequest = LoanRequest(
                 id = 0,
                 userId = 0,
@@ -209,7 +216,7 @@ private fun LoanRequestCardPreview() {
                 requestAt = "2025-05-25"
             ),
             selectedLibrary = LibraryDetail.dummies[0].name,
-            onCardClick = {},
+            onItemClick = {},
             onSelectLibraryClick = {},
             onContinueClick = {},
             onDeleteClick = {}

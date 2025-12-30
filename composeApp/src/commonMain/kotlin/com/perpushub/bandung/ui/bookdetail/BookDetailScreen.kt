@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,10 +33,13 @@ import com.perpushub.bandung.ui.common.component.Header
 import com.perpushub.bandung.ui.common.component.HeaderItemRow
 import com.perpushub.bandung.ui.common.component.ItemRow
 import com.perpushub.bandung.ui.common.util.DateUtil
-import com.perpushub.bandung.ui.navigation.AppNavKey
+import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.AccentButton
+import io.github.composefluent.component.ContentDialog
+import io.github.composefluent.component.ContentDialogButton
+import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.Icon
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ScrollbarContainer
@@ -57,6 +59,7 @@ fun BookDetailScreen(
     BookDetailScreenContent(
         uiState = uiState,
         onBorrow = viewModel::borrow,
+        onErrorMessageClear = viewModel::clearErrorMessage,
         onNavigate = onNavigate
     )
 }
@@ -65,8 +68,25 @@ fun BookDetailScreen(
 fun BookDetailScreenContent(
     uiState: BookDetailUiState,
     onBorrow: (() -> Unit) -> Unit,
+    onErrorMessageClear: () -> Unit,
     onNavigate: (NavKey) -> Unit
 ) {
+    ContentDialog(
+        title = "Terjadi kesalahan",
+        visible = uiState.errorMessage != null,
+        content = {
+            Text("${uiState.errorMessage}")
+        },
+        primaryButtonText = "Tutup",
+        onButtonClick = {
+            when (it) {
+                ContentDialogButton.Primary -> onErrorMessageClear()
+                else -> {}
+            }
+        },
+        size = DialogSize.Min
+    )
+
     if (uiState.isLoading || uiState.book == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -105,7 +125,7 @@ fun BookDetailScreenContent(
                         AccentButton(
                             onClick = {
                                 onBorrow {
-                                    onNavigate(AppNavKey.Borrowing)
+                                    onNavigate(MainNavKey.Borrowing)
                                 }
                             }
                         ) {
@@ -179,7 +199,7 @@ private fun BookCoverSection(
             modifier = Modifier
                 .width(240.dp)
                 .aspectRatio(2f / 3f)
-                .clip(RoundedCornerShape(4.dp)),
+                .clip(FluentTheme.shapes.control),
             contentScale = ContentScale.Crop
         )
     }
@@ -342,6 +362,7 @@ private fun BookDetailScreenPreview() {
         BookDetailScreenContent(
             uiState = BookDetailUiState(),
             onBorrow = {},
+            onErrorMessageClear = {},
             onNavigate = {}
         )
     }
