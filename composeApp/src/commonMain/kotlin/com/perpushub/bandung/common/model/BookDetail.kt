@@ -12,8 +12,7 @@ data class BookDetail(
     val pageCount: Int,
     val categories: List<Category>,
     val coverUrl: String,
-    val language: String,
-    val copies: List<BookCopy>
+    val language: String
 ) {
     companion object {
         val dummies = mapOf(
@@ -39,8 +38,7 @@ data class BookDetail(
                     )
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9780316473095-L.jpg",
-                language = "en",
-                copies = listOf()
+                language = "en"
             ),
             1 to BookDetail(
                 id = 1,
@@ -64,8 +62,7 @@ data class BookDetail(
                     )
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9781975399368-L.jpg",
-                language = "en",
-                copies = listOf()
+                language = "en"
             ),
             2 to BookDetail(
                 id = 2,
@@ -89,8 +86,7 @@ data class BookDetail(
                     )
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9781939130839-L.jpg",
-                language = "en",
-                copies = listOf()
+                language = "en"
             )
         )
     }

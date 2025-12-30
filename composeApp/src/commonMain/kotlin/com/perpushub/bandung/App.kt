@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.savedstate.serialization.SavedStateConfiguration
+import com.perpushub.bandung.di.dataModule
+import com.perpushub.bandung.di.networkModule
 import com.perpushub.bandung.di.repositoryModule
 import com.perpushub.bandung.di.viewModelModule
 import com.perpushub.bandung.ui.main.MainScreen
@@ -25,7 +27,7 @@ fun App(
 ) {
     KoinApplication(
         configuration = KoinConfiguration {
-            modules(repositoryModule, viewModelModule)
+            modules(networkModule, dataModule, repositoryModule, viewModelModule)
         }
     ) {
         AppTheme {

@@ -29,10 +29,10 @@ kotlin {
     
     jvm()
     
-    js {
-        browser()
-        binaries.executable()
-    }
+//    js {
+//        browser()
+//        binaries.executable()
+//    }
     
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -68,6 +68,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.core)
+            implementation(libs.mapcompose)
             implementation(project.dependencies.platform(libs.koin.bom))
         }
         commonTest.dependencies {
@@ -77,6 +80,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.ktor.client.java)
+            implementation(libs.windowStyler)
         }
         webMain.dependencies {
             implementation(libs.navigation3.browser)
@@ -121,8 +125,14 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.perpushub.bandung"
+            packageName = "PerpusHub Bandung"
             packageVersion = "1.0.0"
+
+            windows {
+                shortcut = true
+                menu = true
+                perUserInstall = true
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ package com.perpushub.bandung.ui.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,13 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
+import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.ui.common.component.Header
 import com.perpushub.bandung.ui.home.component.HorizontalBookCard
 import com.perpushub.bandung.ui.home.component.HorizontalList
@@ -53,10 +55,6 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.refreshTopBooks()
-    }
-
     HomeScreenContent(
         uiState = uiState,
         onSearchQueryChange = viewModel::changeSearchQuery,
@@ -82,13 +80,8 @@ fun HomeScreenContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        val lazyListState = rememberLazyListState()
-
-        LaunchedEffect(uiState.searchedBooks) {
-            if (uiState.searchedBooks == null) {
-                lazyListState.animateScrollToItem(0)
-            }
-        }
+        val bookDiscoveryListState = rememberLazyListState()
+        val bookSearchListState = rememberLazyListState()
 
         Header(
             text = "Beranda",
@@ -112,7 +105,7 @@ fun HomeScreenContent(
                         onSearch = {
                             onBooksSearch()
                             scope.launch {
-                                lazyListState.animateScrollToItem(0)
+                                bookSearchListState.animateScrollToItem(0)
                             }
                         }
                     ),
@@ -121,7 +114,7 @@ fun HomeScreenContent(
                             onClick = {
                                 onBooksSearch()
                                 scope.launch {
-                                    lazyListState.animateScrollToItem(0)
+                                    bookSearchListState.animateScrollToItem(0)
                                 }
                             }
                         ) {
@@ -146,68 +139,113 @@ fun HomeScreenContent(
             ) {
                 ProgressRing()
             }
+        } else if (uiState.searchedBooks != null) {
+            BookSearchSection(
+                searchQuery = uiState.searchQuery,
+                searchedBooks = uiState.searchedBooks,
+                lazyListState = bookSearchListState,
+                onNavigate = onNavigate
+            )
         } else {
-            ScrollbarContainer(
-                adapter = rememberScrollbarAdapter(lazyListState),
-                modifier = Modifier.weight(1f)
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    state = lazyListState,
-                    contentPadding = PaddingValues(
-                        start = if (uiState.searchedBooks != null) 32.dp else 0.dp,
-                        end = if (uiState.searchedBooks != null) 32.dp else 0.dp,
-                        bottom = 32.dp
+            BookDiscoverySection(
+                topBooks = uiState.topBooks,
+                recommendedBooks = uiState.recommendedBooks,
+                lazyListState = bookDiscoveryListState,
+                onNavigate = onNavigate
+            )
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.BookSearchSection(
+    searchQuery: String,
+    searchedBooks: List<Book>,
+    lazyListState: LazyListState,
+    onNavigate: (NavKey) -> Unit
+) {
+    ScrollbarContainer(
+        adapter = rememberScrollbarAdapter(lazyListState),
+        modifier = Modifier.weight(1f)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                bottom = 32.dp
+            )
+        ) {
+           if (searchedBooks.isEmpty()) {
+               item {
+                   Text("Buku dengan kata kunci \"${searchQuery}\" tidak ditemukan.")
+               }
+           } else {
+               itemsIndexed(searchedBooks) { index, book ->
+                   HorizontalBookCard(
+                       book = book,
+                       onClick = {
+                           onNavigate(AppNavKey.BookDetail(book.id))
+                       },
+                       modifier = Modifier.fillMaxWidth(),
+                       alternate = index % 2 == 0
+                   )
+               }
+           }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.BookDiscoverySection(
+    topBooks: List<Book>,
+    recommendedBooks: List<Book>,
+    lazyListState: LazyListState,
+    onNavigate: (NavKey) -> Unit
+) {
+    ScrollbarContainer(
+        adapter = rememberScrollbarAdapter(lazyListState),
+        modifier = Modifier.weight(1f)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(bottom = 32.dp)
+        ) {
+            item {
+                HorizontalList(
+                    title = "Buku teratas",
+                    items = topBooks
+                ) { book ->
+                    VerticalBookCard(
+                        book = book,
+                        onClick = {
+                            onNavigate(AppNavKey.BookDetail(book.id))
+                        }
                     )
-                ) {
-                    if (uiState.searchedBooks != null) {
-                        itemsIndexed(uiState.searchedBooks) { index, book ->
-                            HorizontalBookCard(
-                                book = book,
-                                onClick = {
-                                    onNavigate(AppNavKey.BookDetail(book.id))
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                alternate = index % 2 == 0
-                            )
-                        }
-                    } else {
-                        item {
-                            HorizontalList(
-                                title = "Buku teratas",
-                                items = uiState.topBooks
-                            ) { book ->
-                                VerticalBookCard(
-                                    book = book,
-                                    onClick = {
-                                        onNavigate(AppNavKey.BookDetail(book.id))
-                                    }
-                                )
-                            }
-                            Spacer(Modifier.height(32.dp))
-                        }
-                        item {
-                            Text(
-                                text = "Rekomendasi buku",
-                                style = FluentTheme.typography.bodyStrong,
-                                modifier = Modifier.padding(horizontal = 32.dp)
-                            )
-                            Spacer(Modifier.height(16.dp))
-                        }
-                        itemsIndexed(uiState.topBooks) { index, book ->
-                            HorizontalBookCard(
-                                book = book,
-                                onClick = {
-                                    onNavigate(AppNavKey.BookDetail(book.id))
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 32.dp),
-                                alternate = index % 2 == 0
-                            )
-                        }
-                    }
                 }
+                Spacer(Modifier.height(32.dp))
+            }
+            item {
+                Text(
+                    text = "Rekomendasi buku",
+                    style = FluentTheme.typography.bodyStrong,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
+                Spacer(Modifier.height(16.dp))
+            }
+            itemsIndexed(recommendedBooks) { index, book ->
+                HorizontalBookCard(
+                    book = book,
+                    onClick = {
+                        onNavigate(AppNavKey.BookDetail(book.id))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp),
+                    alternate = index % 2 == 0
+                )
             }
         }
     }

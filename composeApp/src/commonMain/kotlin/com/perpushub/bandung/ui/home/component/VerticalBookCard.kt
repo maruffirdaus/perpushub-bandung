@@ -2,8 +2,10 @@ package com.perpushub.bandung.ui.home.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +41,7 @@ fun VerticalBookCard(
                     it
                 }
             }
+            .padding(8.dp)
     ) {
         AsyncImage(
             model = book.coverUrl,
@@ -49,26 +52,23 @@ fun VerticalBookCard(
                 .clip(RoundedCornerShape(4.dp)),
             contentScale = ContentScale.Crop
         )
-        Column(
-            modifier = Modifier.padding(4.dp)
-        ) {
-            Text(
-                text = book.title,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
-            )
-            Text(
-                text = if (book.authors.isEmpty()) {
-                    "Unknown"
-                } else {
-                    book.authors.joinToString(", ") { it.name }
-                },
-                color = FluentTheme.colors.text.text.secondary,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                style = FluentTheme.typography.caption
-            )
-        }
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = book.title,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+        Text(
+            text = if (book.authors.isEmpty()) {
+                "Unknown"
+            } else {
+                book.authors.joinToString(", ") { it.name }
+            },
+            color = FluentTheme.colors.text.text.secondary,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            style = FluentTheme.typography.caption
+        )
     }
 }
 

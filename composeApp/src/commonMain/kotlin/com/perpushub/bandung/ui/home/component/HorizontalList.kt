@@ -1,7 +1,6 @@
 package com.perpushub.bandung.ui.home.component
 
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +36,6 @@ fun HorizontalList(
         Spacer(Modifier.height(16.dp))
         LazyRow(
             state = lazyListState,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
             flingBehavior = rememberSnapFlingBehavior(lazyListState),
             contentPadding = PaddingValues(horizontal = 32.dp)
         ) {

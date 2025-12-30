@@ -1,8 +1,10 @@
 package com.perpushub.bandung.ui.main
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
@@ -57,7 +59,7 @@ fun MainScreenContent(
     NavigationView(
         menuItems = {
             item {
-                val isSelected = backStack.lastOrNull() == AppNavKey.Home
+                val isSelected = backStack.lastOrNull() is AppNavKey.Home
 
                 MenuItem(
                     selected = isSelected,
@@ -76,26 +78,26 @@ fun MainScreenContent(
                 )
             }
             item {
-                val isSelected = backStack.lastOrNull() == AppNavKey.Borrow
+                val isSelected = backStack.lastOrNull() is AppNavKey.Borrowing
 
                 MenuItem(
                     selected = isSelected,
                     onClick = {
-                        if (!isSelected) onNavigate(AppNavKey.Borrow)
+                        if (!isSelected) onNavigate(AppNavKey.Borrowing)
                     },
                     text = {
-                        Text("Pinjam")
+                        Text("Peminjaman")
                     },
                     icon = {
                         Icon(
                             imageVector = Icons.Regular.BookAdd,
-                            contentDescription = "Pinjam"
+                            contentDescription = "Peminjaman"
                         )
                     }
                 )
             }
             item {
-                val isSelected = backStack.lastOrNull() == AppNavKey.Delivery
+                val isSelected = backStack.lastOrNull() is AppNavKey.Delivery
 
                 MenuItem(
                     selected = isSelected,
@@ -103,18 +105,18 @@ fun MainScreenContent(
                         if (!isSelected) onNavigate(AppNavKey.Delivery)
                     },
                     text = {
-                        Text("Pengantaran")
+                        Text("Pengiriman")
                     },
                     icon = {
                         Icon(
                             imageVector = Icons.Regular.Box,
-                            contentDescription = "Pengantaran"
+                            contentDescription = "Pengiriman"
                         )
                     }
                 )
             }
             item {
-                val isSelected = backStack.lastOrNull() == AppNavKey.History
+                val isSelected = backStack.lastOrNull() is AppNavKey.History
 
                 MenuItem(
                     selected = isSelected,
@@ -133,6 +135,7 @@ fun MainScreenContent(
                 )
             }
         },
+        modifier = Modifier.safeContentPadding(),
         displayMode = if (isAtLeastExpandedBreakpoint) {
             NavigationDisplayMode.Left
         } else if (isAtLeastMediumBreakpoint) {
@@ -155,7 +158,7 @@ fun MainScreenContent(
         },
         footerItems = {
             item {
-                val isSelected = backStack.lastOrNull() == AppNavKey.Profile
+                val isSelected = backStack.lastOrNull() is AppNavKey.Profile
 
                 MenuItem(
                     selected = isSelected,

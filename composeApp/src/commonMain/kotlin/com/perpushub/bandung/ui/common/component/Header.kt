@@ -1,22 +1,46 @@
 package com.perpushub.bandung.ui.common.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.composefluent.FluentTheme
+import io.github.composefluent.ProvideTextStyle
 import io.github.composefluent.component.Text
 
 @Composable
 fun Header(
     text: String,
     actionsOnly: Boolean = false,
-    actions: @Composable RowScope.() -> Unit = {}
+    actions: @Composable (RowScope.() -> Unit)? = null
+) {
+    Header(
+        text = {
+            Text(
+                text = text,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+        },
+        actionsOnly = actionsOnly,
+        actions = actions
+    )
+}
+
+@Composable
+fun Header(
+    text: @Composable () -> Unit,
+    actionsOnly: Boolean = false,
+    actions: @Composable (RowScope.() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
@@ -26,12 +50,21 @@ fun Header(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (!actionsOnly) {
-            Text(
-                text = text,
-                modifier = Modifier.weight(1f),
-                style = FluentTheme.typography.title
-            )
+            Box(
+                modifier = Modifier.weight(1f)
+            ) {
+                ProvideTextStyle(
+                    FluentTheme.typography.title
+                ) {
+                    text()
+                }
+            }
         }
-        actions()
+        if (actions != null) {
+            if (!actionsOnly) {
+                Spacer(Modifier.width(24.dp))
+            }
+            actions()
+        }
     }
 }

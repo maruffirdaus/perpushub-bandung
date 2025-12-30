@@ -21,7 +21,7 @@ fun main() {
                 when (key) {
                     is AppNavKey.Home -> buildBrowserHistoryFragment("home")
                     is AppNavKey.BookDetail -> buildBrowserHistoryFragment("book-detail", mapOf("id" to key.id.toString()))
-                    is AppNavKey.Borrow -> buildBrowserHistoryFragment("borrow")
+                    is AppNavKey.Borrowing -> buildBrowserHistoryFragment("borrowing")
                     is AppNavKey.Delivery -> buildBrowserHistoryFragment("delivery")
                     is AppNavKey.History -> buildBrowserHistoryFragment("history")
                     is AppNavKey.Profile -> buildBrowserHistoryFragment("profile")
@@ -36,7 +36,7 @@ fun main() {
                         getBrowserHistoryFragmentParameters(fragment).getValue("id")?.toInt()
                             ?: error("id is required")
                     )
-                    "borrow" -> AppNavKey.Borrow
+                    "borrowing" -> AppNavKey.Borrowing
                     "delivery" -> AppNavKey.Delivery
                     "history" -> AppNavKey.History
                     "profile" -> AppNavKey.Profile

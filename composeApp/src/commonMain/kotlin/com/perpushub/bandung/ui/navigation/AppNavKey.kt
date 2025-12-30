@@ -15,7 +15,7 @@ object AppNavKey {
     ) : NavKey
 
     @Serializable
-    object Borrow : NavKey
+    object Borrowing : NavKey
 
     @Serializable
     object Delivery : NavKey
@@ -30,7 +30,7 @@ object AppNavKey {
         polymorphic(NavKey::class) {
             subclass(Home::class, Home.serializer())
             subclass(BookDetail::class, BookDetail.serializer())
-            subclass(Borrow::class, Borrow.serializer())
+            subclass(Borrowing::class, Borrowing.serializer())
             subclass(Delivery::class, Delivery.serializer())
             subclass(History::class, History.serializer())
             subclass(Profile::class, Profile.serializer())

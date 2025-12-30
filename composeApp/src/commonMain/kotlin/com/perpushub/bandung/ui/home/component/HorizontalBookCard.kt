@@ -22,7 +22,6 @@ import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.Text
-import kotlinx.datetime.LocalDate
 
 @Composable
 fun HorizontalBookCard(
@@ -64,21 +63,20 @@ fun HorizontalBookCard(
         )
         Spacer(Modifier.width(12.dp))
         Column {
-            Text(book.title)
             Text(
-                text = buildString {
-                    append(
-                        if (book.authors.isEmpty()) {
-                            "Unknown"
-                        } else {
-                            book.authors.joinToString(", ") { it.name }
-                        }
-                    )
-                    append(" (")
-                    append(LocalDate.parse(book.publishedDate).year.toString())
-                    append(")")
+                text = book.title,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+            )
+            Text(
+                text = if (book.authors.isEmpty()) {
+                    "Unknown"
+                } else {
+                    book.authors.joinToString(", ") { it.name }
                 },
                 color = FluentTheme.colors.text.text.secondary,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
                 style = FluentTheme.typography.caption
             )
             Spacer(Modifier.height(12.dp))
