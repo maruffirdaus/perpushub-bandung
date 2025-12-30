@@ -12,11 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
-import com.perpushub.bandung.ui.main.component.LoginDialog
-import com.perpushub.bandung.ui.main.component.RegisterDialog
+import com.perpushub.bandung.ui.navigation.AppNavKey
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
-import io.github.composefluent.component.ContentDialog
 import io.github.composefluent.component.ContentDialogButton
 import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.Icon
@@ -50,14 +48,7 @@ fun MainScreen(
 
     MainScreenContent(
         uiState = uiState,
-        onLogin = viewModel::login,
-        onRegister = viewModel::register,
         onLogout = viewModel::logout,
-        onLoginDialogOpen = viewModel::openLoginDialog,
-        onLoginDialogClose = viewModel::closeLoginDialog,
-        onRegisterDialogOpen = viewModel::openRegisterDialog,
-        onRegisterDialogClose = viewModel::closeRegisterDialog,
-        onErrorMessageClear = viewModel::clearErrorMessage,
         navDisplay = navDisplay,
         backStack = backStack,
         onNavigate = onNavigate,
@@ -69,14 +60,7 @@ fun MainScreen(
 @Composable
 fun MainScreenContent(
     uiState: MainUiState,
-    onLogin: (String, String) -> Unit,
-    onRegister: (String, String, String, String) -> Unit,
     onLogout: () -> Unit,
-    onLoginDialogOpen: () -> Unit,
-    onLoginDialogClose: () -> Unit,
-    onRegisterDialogOpen: () -> Unit,
-    onRegisterDialogClose: () -> Unit,
-    onErrorMessageClear: () -> Unit,
     navDisplay: @Composable () -> Unit,
     backStack: List<NavKey>,
     onNavigate: (NavKey) -> Unit,
@@ -91,40 +75,6 @@ fun MainScreenContent(
 
     val dialog = LocalContentDialog.current
     val scope = rememberCoroutineScope()
-
-    LoginDialog(
-        visible = uiState.isLoginDialogOpen,
-        loading = uiState.isLoginDialogLoading,
-        onLoginClick = onLogin,
-        onRegisterClick = {
-            onLoginDialogClose()
-            onRegisterDialogOpen()
-        },
-        onDismissRequest = onLoginDialogClose
-    )
-
-    RegisterDialog(
-        visible = uiState.isRegisterDialogOpen,
-        loading = uiState.isRegisterDialogLoading,
-        onRegisterClick = onRegister,
-        onDismissRequest = onRegisterDialogClose
-    )
-
-    ContentDialog(
-        title = "Terjadi kesalahan",
-        visible = uiState.errorMessage != null,
-        content = {
-            Text("${uiState.errorMessage}")
-        },
-        primaryButtonText = "Tutup",
-        onButtonClick = {
-            when (it) {
-                ContentDialogButton.Primary -> onErrorMessageClear()
-                else -> {}
-            }
-        },
-        size = DialogSize.Min
-    )
 
     NavigationView(
         menuItems = {
@@ -282,7 +232,7 @@ fun MainScreenContent(
                     MenuItem(
                         selected = false,
                         onClick = {
-                            onLoginDialogOpen()
+                            onNavigate(AppNavKey.Auth)
                         },
                         text = {
                             Text("Masuk atau daftar")
@@ -313,14 +263,7 @@ private fun MainScreenPreview() {
     AppTheme {
         MainScreenContent(
             uiState = MainUiState(),
-            onLogin = { _, _ -> },
-            onRegister = { _, _, _, _ -> },
             onLogout = {},
-            onLoginDialogOpen = {},
-            onLoginDialogClose = {},
-            onRegisterDialogOpen = {},
-            onRegisterDialogClose = {},
-            onErrorMessageClear = {},
             navDisplay = {},
             backStack = emptyList(),
             onNavigate = {},

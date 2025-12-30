@@ -22,14 +22,14 @@ fun App(
         configuration = SavedStateConfiguration {
             serializersModule = AppNavKey.serializersModule
         },
-        AppNavKey.Main
+        AppNavKey.Auth
     ),
     mainBackStack: MutableList<NavKey> = rememberNavBackStack(
         configuration = SavedStateConfiguration {
             serializersModule = MainNavKey.serializersModule
         },
         MainNavKey.Home
-    ),
+    )
 ) {
     KoinApplication(
         configuration = KoinConfiguration {

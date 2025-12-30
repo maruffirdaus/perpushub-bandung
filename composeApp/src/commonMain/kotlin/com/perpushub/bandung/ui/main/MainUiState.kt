@@ -7,6 +7,5 @@ data class MainUiState(
     val isLoginDialogOpen: Boolean = false,
     val isRegisterDialogOpen: Boolean = false,
     val isLoginDialogLoading: Boolean = false,
-    val isRegisterDialogLoading: Boolean = false,
-    val errorMessage: String? = null
+    val isRegisterDialogLoading: Boolean = false
 )

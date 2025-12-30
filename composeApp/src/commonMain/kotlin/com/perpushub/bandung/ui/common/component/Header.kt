@@ -21,7 +21,8 @@ import io.github.composefluent.component.Text
 fun Header(
     text: String,
     actionsOnly: Boolean = false,
-    actions: @Composable (RowScope.() -> Unit)? = null
+    actions: @Composable (RowScope.() -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     Header(
         text = {
@@ -31,6 +32,7 @@ fun Header(
                 maxLines = 1
             )
         },
+        modifier = modifier,
         actionsOnly = actionsOnly,
         actions = actions
     )
@@ -39,11 +41,12 @@ fun Header(
 @Composable
 fun Header(
     text: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
     actionsOnly: Boolean = false,
     actions: @Composable (RowScope.() -> Unit)? = null
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 32.dp, top = 32.dp, end = 32.dp, bottom = 24.dp),
         horizontalArrangement = Arrangement.SpaceBetween,

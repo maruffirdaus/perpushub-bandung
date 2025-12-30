@@ -13,7 +13,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { AuthViewModel(get(), get()) }
-    viewModel { MainViewModel(get(), get(), get()) }
+    viewModel { MainViewModel(get(), get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { (id: Int) -> BookDetailViewModel(id, get(), get(), get()) }
     viewModel { BorrowingViewModel(get(), get(), get(), get(), get()) }
