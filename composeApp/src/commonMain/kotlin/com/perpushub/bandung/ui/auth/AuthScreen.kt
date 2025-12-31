@@ -1,15 +1,20 @@
 package com.perpushub.bandung.ui.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -29,10 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
-import com.perpushub.bandung.ui.common.component.Header
 import com.perpushub.bandung.ui.navigation.AppNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
+import io.github.composefluent.component.AccentButton
+import io.github.composefluent.component.Button
 import io.github.composefluent.component.Icon
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.Text
@@ -62,53 +68,70 @@ fun AuthScreen(
 
     AuthScreenContent(
         uiState = uiState,
-        onNavigate = onNavigate
+        onLogin = viewModel::login
     )
 }
 
 @Composable
 fun AuthScreenContent(
     uiState: AuthUiState,
-    onNavigate: (NavKey) -> Unit
+    onLogin: (String, String) -> Unit
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val isAtLeastMediumBreakpoint =
         windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
 
     if (isAtLeastMediumBreakpoint) {
+        val scrollState = rememberScrollState()
+
         Row {
             ImageSection(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f)
             )
-            AuthSection(
-                login = uiState.isLogin,
+            ScrollbarContainer(
+                adapter = rememberScrollbarAdapter(scrollState),
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f)
-            )
+            ) {
+                AuthSection(
+                    login = uiState.isLogin,
+                    onLogin = onLogin,
+                    scrollState = scrollState
+                )
+            }
         }
     } else {
-        Column {
-            ImageSection(
+        val scrollState = rememberScrollState()
+
+        ScrollbarContainer(
+            adapter = rememberScrollbarAdapter(scrollState),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
-            AuthSection(
-                login = uiState.isLogin,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            )
+                    .fillMaxSize()
+                    .verticalScroll(scrollState)
+            ) {
+                ImageSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(3f / 2f)
+                )
+                AuthSection(
+                    login = uiState.isLogin,
+                    onLogin = onLogin
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun ImageSection(
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Image(
         painter = painterResource(Res.drawable.img_auth),
@@ -121,56 +144,67 @@ private fun ImageSection(
 @Composable
 private fun AuthSection(
     login: Boolean,
-    modifier: Modifier = Modifier
+    onLogin: (String, String) -> Unit,
+    scrollState: ScrollState? = null
 ) {
     Column(
-        modifier = modifier.background(FluentTheme.colors.background.layer.alt),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(FluentTheme.colors.background.layer.alt)
+            .let {
+                if (scrollState != null) {
+                    it.verticalScroll(scrollState)
+                } else {
+                    it
+                }
+            }
+            .padding(32.dp)
+            .wrapContentWidth()
+            .widthIn(max = 360.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val width = 480.dp
-        val scrollState = rememberScrollState()
-
-        Header(
-            text = if (login) "Masuk" else "Daftar",
-            modifier = Modifier.width(width)
+        Text(
+            text = "Masuk",
+            modifier = Modifier.fillMaxWidth(),
+            style = FluentTheme.typography.title
         )
-        ScrollbarContainer(
-            adapter = rememberScrollbarAdapter(scrollState),
-            modifier = Modifier.weight(1f)
+        Spacer(Modifier.height(24.dp))
+        if (login) {
+            LoginSection()
+        } else {
+            RegisterSection()
+        }
+        Spacer(Modifier.height(32.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val childModifier = Modifier
-                .width(width)
-                .fillMaxHeight()
-                .verticalScroll(scrollState)
-                .padding(
-                    start = 32.dp,
-                    end = 32.dp,
-                    bottom = 32.dp
-                )
-
-            if (login) {
-                LoginSection(
-                    modifier = childModifier
-                )
-            } else {
-                RegisterSection(
-                    modifier = childModifier
-                )
+            AccentButton(
+                onClick = {
+                    onLogin("", "")
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Masuk")
+            }
+            Button(
+                onClick = {},
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Daftar")
             }
         }
     }
 }
 
 @Composable
-private fun LoginSection(
-    modifier: Modifier = Modifier
-) {
+private fun LoginSection() {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
         TextField(
             value = email,
@@ -220,9 +254,7 @@ private fun LoginSection(
 }
 
 @Composable
-private fun RegisterSection(
-    modifier: Modifier = Modifier
-) {
+private fun RegisterSection() {
     var username by rememberSaveable { mutableStateOf("") }
     var fullName by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
@@ -230,7 +262,7 @@ private fun RegisterSection(
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     ) {
         TextField(
             value = username,
@@ -309,7 +341,7 @@ private fun AuthScreenPreview() {
     AppTheme {
         AuthScreenContent(
             uiState = AuthUiState(),
-            onNavigate = {}
+            onLogin = { _, _ -> }
         )
     }
 }

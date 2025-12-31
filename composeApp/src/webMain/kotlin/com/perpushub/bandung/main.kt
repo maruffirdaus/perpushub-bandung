@@ -13,7 +13,7 @@ import com.perpushub.bandung.ui.navigation.main.MainNavKey
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport {
-        val appBackStack = remember { mutableStateListOf<NavKey>(AppNavKey.Main) }
+        val appBackStack = remember { mutableStateListOf<NavKey>(AppNavKey.Auth) }
         val mainBackStack = remember { mutableStateListOf<NavKey>(MainNavKey.Home) }
 
         HierarchicalBrowserNavigation {
