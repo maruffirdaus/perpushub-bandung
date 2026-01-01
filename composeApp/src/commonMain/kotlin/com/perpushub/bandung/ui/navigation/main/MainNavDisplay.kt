@@ -6,18 +6,19 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.perpushub.bandung.ui.bookdetail.BookDetailScreen
-import com.perpushub.bandung.ui.borrowing.BorrowingScreen
-import com.perpushub.bandung.ui.delivery.DeliveryScreen
-import com.perpushub.bandung.ui.history.HistoryScreen
-import com.perpushub.bandung.ui.home.HomeScreen
-import com.perpushub.bandung.ui.profile.ProfileScreen
+import com.perpushub.bandung.ui.main.bookdetail.BookDetailScreen
+import com.perpushub.bandung.ui.main.borrowing.BorrowingScreen
+import com.perpushub.bandung.ui.main.delivery.DeliveryScreen
+import com.perpushub.bandung.ui.main.history.HistoryScreen
+import com.perpushub.bandung.ui.main.home.HomeScreen
+import com.perpushub.bandung.ui.main.profile.ProfileScreen
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 fun MainNavDisplay(
-    backStack: MutableList<NavKey>
+    backStack: MutableList<NavKey>,
+    onNavigate: (NavKey) -> Unit = backStack::add
 ) {
     NavDisplay(
         backStack = backStack,
@@ -28,24 +29,18 @@ fun MainNavDisplay(
         entryProvider = entryProvider {
             entry<MainNavKey.Home> {
                 HomeScreen(
-                    onNavigate = { key ->
-                        backStack.add(key)
-                    }
+                    onNavigate = onNavigate
                 )
             }
             entry<MainNavKey.BookDetail> { key ->
                 BookDetailScreen(
-                    onNavigate = { key ->
-                        backStack.add(key)
-                    },
+                    onNavigate = onNavigate,
                     viewModel = koinViewModel { parametersOf(key.id) }
                 )
             }
             entry<MainNavKey.Borrowing> {
                 BorrowingScreen(
-                    onNavigate = { key ->
-                        backStack.add(key)
-                    }
+                    onNavigate = onNavigate
                 )
             }
             entry<MainNavKey.Delivery> {

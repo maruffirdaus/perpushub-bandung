@@ -48,7 +48,7 @@ fun MainScreen(
 
     MainScreenContent(
         uiState = uiState,
-        onLogout = viewModel::logout,
+        onEvent = viewModel::onEvent,
         navDisplay = navDisplay,
         backStack = backStack,
         onNavigate = onNavigate,
@@ -60,7 +60,7 @@ fun MainScreen(
 @Composable
 fun MainScreenContent(
     uiState: MainUiState,
-    onLogout: () -> Unit,
+    onEvent: (MainEvent) -> Unit,
     navDisplay: @Composable () -> Unit,
     backStack: List<NavKey>,
     onNavigate: (NavKey) -> Unit,
@@ -212,7 +212,8 @@ fun MainScreenContent(
                                     size = DialogSize.Min
                                 )
                                 if (result == ContentDialogButton.Primary) {
-                                    onLogout()
+                                    onEvent(MainEvent.OnLogout)
+                                    onNavigate(AppNavKey.Auth)
                                 }
                             }
                         },
@@ -263,7 +264,7 @@ private fun MainScreenPreview() {
     AppTheme {
         MainScreenContent(
             uiState = MainUiState(),
-            onLogout = {},
+            onEvent = {},
             navDisplay = {},
             backStack = emptyList(),
             onNavigate = {},

@@ -3,7 +3,7 @@ package com.perpushub.bandung.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.UserRepository
-import com.perpushub.bandung.service.session.SessionManager
+import com.perpushub.bandung.service.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -32,7 +32,13 @@ class MainViewModel(
         }
     }
 
-    fun logout() {
+    fun onEvent(event: MainEvent) {
+        when (event) {
+            is MainEvent.OnLogout -> logout()
+        }
+    }
+
+    private fun logout() {
         viewModelScope.launch {
             sessionManager.logout()
         }

@@ -10,6 +10,7 @@ import com.perpushub.bandung.di.serviceModule
 import com.perpushub.bandung.di.viewModelModule
 import com.perpushub.bandung.ui.navigation.AppNavDisplay
 import com.perpushub.bandung.ui.navigation.AppNavKey
+import com.perpushub.bandung.ui.navigation.auth.AuthNavKey
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import org.koin.compose.KoinApplication
@@ -23,6 +24,12 @@ fun App(
             serializersModule = AppNavKey.serializersModule
         },
         AppNavKey.Auth
+    ),
+    authBackStack: MutableList<NavKey> = rememberNavBackStack(
+        configuration = SavedStateConfiguration {
+            serializersModule = AuthNavKey.serializersModule
+        },
+        AuthNavKey.Login
     ),
     mainBackStack: MutableList<NavKey> = rememberNavBackStack(
         configuration = SavedStateConfiguration {
@@ -39,6 +46,7 @@ fun App(
         AppTheme {
             AppNavDisplay(
                 appBackStack = appBackStack,
+                authBackStack = authBackStack,
                 mainBackStack = mainBackStack,
                 backButtonEnabled = backButtonEnabled
             )

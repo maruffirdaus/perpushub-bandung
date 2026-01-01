@@ -8,12 +8,15 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.perpushub.bandung.ui.auth.AuthScreen
 import com.perpushub.bandung.ui.main.MainScreen
+import com.perpushub.bandung.ui.navigation.auth.AuthNavDisplay
+import com.perpushub.bandung.ui.navigation.auth.AuthNavKey
 import com.perpushub.bandung.ui.navigation.main.MainNavDisplay
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 
 @Composable
 fun AppNavDisplay(
     appBackStack: MutableList<NavKey>,
+    authBackStack: MutableList<NavKey>,
     mainBackStack: MutableList<NavKey>,
     backButtonEnabled: Boolean = true
 ) {
@@ -26,6 +29,17 @@ fun AppNavDisplay(
         entryProvider = entryProvider {
             entry<AppNavKey.Auth> {
                 AuthScreen(
+                    navDisplay = {
+                        AuthNavDisplay(
+                            backStack = authBackStack,
+                            onNavigate = { key ->
+                                when (key) {
+                                    is AppNavKey -> appBackStack[0] = key
+                                    is AuthNavKey -> authBackStack.add(key)
+                                }
+                            }
+                        )
+                    },
                     onNavigate = { key ->
                         appBackStack[0] = key
                     }
