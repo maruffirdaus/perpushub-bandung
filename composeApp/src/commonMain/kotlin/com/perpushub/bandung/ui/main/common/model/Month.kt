@@ -1,4 +1,4 @@
-package com.perpushub.bandung.ui.common.model
+package com.perpushub.bandung.ui.main.common.model
 
 enum class Month(val label: String) {
     JAN("Januari"),

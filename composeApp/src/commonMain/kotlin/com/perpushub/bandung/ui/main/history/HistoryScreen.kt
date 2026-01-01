@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.perpushub.bandung.ui.common.component.Header
+import com.perpushub.bandung.ui.main.common.component.Header
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.component.ContentDialog
 import io.github.composefluent.component.ContentDialogButton

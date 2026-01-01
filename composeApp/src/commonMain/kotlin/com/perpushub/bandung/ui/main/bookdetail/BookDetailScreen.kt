@@ -25,18 +25,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import coil3.compose.AsyncImage
-import com.perpushub.bandung.common.model.BookCopy
-import com.perpushub.bandung.common.model.BookCopyStatus
 import com.perpushub.bandung.common.model.BookDetail
-import com.perpushub.bandung.ui.common.component.ExpanderItem
-import com.perpushub.bandung.ui.common.component.Header
-import com.perpushub.bandung.ui.common.component.HeaderItemRow
-import com.perpushub.bandung.ui.common.component.ItemRow
-import com.perpushub.bandung.ui.common.util.DateUtil
+import com.perpushub.bandung.ui.main.common.component.ActionDivider
+import com.perpushub.bandung.ui.main.common.component.ExpanderItem
+import com.perpushub.bandung.ui.main.common.component.Header
+import com.perpushub.bandung.ui.main.common.component.ItemRow
+import com.perpushub.bandung.ui.main.common.component.LibraryDialog
+import com.perpushub.bandung.ui.main.common.util.DateUtil
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.AccentButton
+import io.github.composefluent.component.Button
 import io.github.composefluent.component.ContentDialog
 import io.github.composefluent.component.ContentDialogButton
 import io.github.composefluent.component.DialogSize
@@ -48,6 +48,7 @@ import io.github.composefluent.component.rememberScrollbarAdapter
 import io.github.composefluent.icons.Icons
 import io.github.composefluent.icons.regular.BookAdd
 import org.koin.compose.viewmodel.koinViewModel
+import ovh.plrapps.mapcompose.ui.state.MapState
 
 @Composable
 fun BookDetailScreen(
@@ -59,7 +60,8 @@ fun BookDetailScreen(
     BookDetailScreenContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        onNavigate = onNavigate
+        onNavigate = onNavigate,
+        mapState = viewModel.mapState
     )
 }
 
@@ -67,7 +69,8 @@ fun BookDetailScreen(
 fun BookDetailScreenContent(
     uiState: BookDetailUiState,
     onEvent: (BookDetailEvent) -> Unit,
-    onNavigate: (NavKey) -> Unit
+    onNavigate: (NavKey) -> Unit,
+    mapState: MapState? = null
 ) {
     ContentDialog(
         title = "Terjadi kesalahan",
@@ -93,6 +96,17 @@ fun BookDetailScreenContent(
             ProgressRing()
         }
     } else {
+        LibraryDialog(
+            bookCopies = uiState.bookCopies,
+            libraries = uiState.libraries,
+            visible = uiState.isLibraryDialogOpen,
+            onDismissRequest = {
+                onEvent(BookDetailEvent.OnLibraryDialogClose)
+            },
+            mapState = mapState,
+            loading = uiState.isLibraryDialogLoading
+        )
+
         BoxWithConstraints {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -105,7 +119,7 @@ fun BookDetailScreenContent(
                             Text(
                                 text = uiState.book.title,
                                 overflow = TextOverflow.Ellipsis,
-                                maxLines = 2
+                                maxLines = 1
                             )
                             Text(
                                 text = if (uiState.book.authors.isEmpty()) {
@@ -120,6 +134,14 @@ fun BookDetailScreenContent(
                         }
                     },
                     actions = {
+                        Button(
+                            onClick = {
+                                onEvent(BookDetailEvent.OnLibraryDialogOpen)
+                            }
+                        ) {
+                            Text("Cek ketersediaan")
+                        }
+                        ActionDivider()
                         AccentButton(
                             onClick = {
                                 onEvent(
@@ -158,9 +180,8 @@ fun BookDetailScreenContent(
                                 book = uiState.book
                             )
                             Spacer(Modifier.width(16.dp))
-                            BookDetailSection(
-                                book = uiState.book,
-                                bookCopies = uiState.bookCopies
+                            BookAboutSection(
+                                book = uiState.book
                             )
                         }
                     } else {
@@ -172,9 +193,8 @@ fun BookDetailScreenContent(
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(Modifier.height(16.dp))
-                            BookDetailSection(
-                                book = uiState.book,
-                                bookCopies = uiState.bookCopies
+                            BookAboutSection(
+                                book = uiState.book
                             )
                         }
                     }
@@ -201,22 +221,6 @@ private fun BookCoverSection(
                 .aspectRatio(2f / 3f)
                 .clip(FluentTheme.shapes.control),
             contentScale = ContentScale.Crop
-        )
-    }
-}
-
-@Composable
-private fun BookDetailSection(
-    book: BookDetail,
-    bookCopies: List<BookCopy>
-) {
-    Column {
-        BookAboutSection(
-            book = book
-        )
-        Spacer(Modifier.height(4.dp))
-        BookCopiesSection(
-            bookCopies = bookCopies
         )
     }
 }
@@ -311,56 +315,6 @@ private fun BookAboutSection(
             ),
             separatorVisible = false
         )
-    }
-}
-
-@Composable
-private fun BookCopiesSection(
-    bookCopies: List<BookCopy>
-) {
-    ExpanderItem(
-        title = "Ketersediaan di perpustakaan",
-        defaultExpanded = true
-    ) {
-        val distinctCopies = bookCopies
-            .filter { it.status == BookCopyStatus.AVAILABLE }
-            .distinctBy { it.library.id }
-            .sortedBy { it.library.name }
-
-        if (distinctCopies.isEmpty()) {
-            ItemRow(
-                items = listOf(
-                    {
-                        Text("Salinan tidak tersedia")
-                    }
-                ),
-                separatorVisible = false
-            )
-        } else {
-            HeaderItemRow(
-                listOf(
-                    "Perpustakaan",
-                    "Jumlah"
-                )
-            )
-            distinctCopies.forEachIndexed { index, copy ->
-                ItemRow(
-                    items = listOf(
-                        {
-                            Text(copy.library.name)
-                        },
-                        {
-                            Text(
-                                text = bookCopies.count {
-                                    it.library.id == copy.library.id
-                                }.toString()
-                            )
-                        }
-                    ),
-                    separatorVisible = index != distinctCopies.lastIndex
-                )
-            }
-        }
     }
 }
 

@@ -1,6 +1,6 @@
-package com.perpushub.bandung.ui.common.util
+package com.perpushub.bandung.ui.main.common.util
 
-import com.perpushub.bandung.ui.common.model.Month
+import com.perpushub.bandung.ui.main.common.model.Month
 import kotlinx.datetime.LocalDate
 
 object DateUtil {

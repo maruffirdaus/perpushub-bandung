@@ -88,13 +88,13 @@ class BorrowingViewModel(
     private fun refreshSelectLibraryDialogData(bookId: Int) {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isSelectLibraryDialogLoading = true)
+                it.copy(isLibraryDialogLoading = true)
             }
             _uiState.update {
                 it.copy(bookCopies = bookRepository.getBookCopies(bookId))
             }
             _uiState.update {
-                it.copy(isSelectLibraryDialogLoading = false)
+                it.copy(isLibraryDialogLoading = false)
             }
         }
     }

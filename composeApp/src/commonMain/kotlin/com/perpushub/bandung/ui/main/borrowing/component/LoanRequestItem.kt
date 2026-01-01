@@ -28,9 +28,9 @@ import coil3.compose.AsyncImage
 import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.common.model.LibraryDetail
 import com.perpushub.bandung.common.model.LoanRequest
-import com.perpushub.bandung.ui.common.component.ExpanderItem
-import com.perpushub.bandung.ui.common.component.HeaderItemRow
-import com.perpushub.bandung.ui.common.component.ItemRow
+import com.perpushub.bandung.ui.main.common.component.ExpanderItem
+import com.perpushub.bandung.ui.main.common.component.HeaderItemRow
+import com.perpushub.bandung.ui.main.common.component.ItemRow
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.ExperimentalFluentApi
 import io.github.composefluent.FluentTheme

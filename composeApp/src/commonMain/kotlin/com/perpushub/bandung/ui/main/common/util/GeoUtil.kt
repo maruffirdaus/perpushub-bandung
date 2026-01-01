@@ -1,4 +1,4 @@
-package com.perpushub.bandung.ui.common.util
+package com.perpushub.bandung.ui.main.common.util
 
 import kotlin.math.PI
 import kotlin.math.ln

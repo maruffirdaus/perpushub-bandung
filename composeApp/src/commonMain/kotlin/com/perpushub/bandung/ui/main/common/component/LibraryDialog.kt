@@ -1,4 +1,4 @@
-package com.perpushub.bandung.ui.main.borrowing.component
+package com.perpushub.bandung.ui.main.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -34,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.perpushub.bandung.common.model.BookCopy
 import com.perpushub.bandung.common.model.LibraryDetail
-import com.perpushub.bandung.ui.common.util.GeoUtil
+import com.perpushub.bandung.ui.main.common.util.GeoUtil
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.AccentButton
@@ -47,22 +48,24 @@ import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.Text
 import io.github.composefluent.component.rememberScrollbarAdapter
 import io.github.composefluent.icons.Icons
+import io.github.composefluent.icons.filled.Location
 import io.github.composefluent.icons.regular.CheckmarkCircle
 import io.github.composefluent.icons.regular.Warning
 import kotlinx.coroutines.launch
-import ovh.plrapps.mapcompose.api.scrollTo
+import ovh.plrapps.mapcompose.api.addMarker
+import ovh.plrapps.mapcompose.api.centerOnMarker
 import ovh.plrapps.mapcompose.ui.MapUI
 import ovh.plrapps.mapcompose.ui.state.MapState
 
 @Composable
-fun SelectLibraryDialog(
+fun LibraryDialog(
     bookCopies: List<BookCopy>,
     libraries: List<LibraryDetail>,
     visible: Boolean,
-    loading: Boolean,
-    onSelectClick: (LibraryDetail) -> Unit,
     onDismissRequest: () -> Unit,
-    mapState: MapState? = null
+    mapState: MapState? = null,
+    onSelectClick: ((LibraryDetail) -> Unit)? = null,
+    loading: Boolean = false
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val isAtLeastExpandedBreakpoint =
@@ -72,15 +75,6 @@ fun SelectLibraryDialog(
         720.dp
     } else {
         360.dp
-    }
-
-    val scope = rememberCoroutineScope()
-
-    scope.launch {
-        mapState?.scrollTo(
-            GeoUtil.lonToRelativeX(libraries.getOrNull(0)?.longitude ?: 0.0),
-            GeoUtil.latToRelativeY(libraries.getOrNull(0)?.latitude ?: 0.0),
-        )
     }
 
     FluentDialog(
@@ -98,11 +92,12 @@ fun SelectLibraryDialog(
                     bookCopies = bookCopies,
                     libraries = libraries,
                     loading = loading,
-                    onSelectClick = onSelectClick,
                     onDismissRequest = onDismissRequest,
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight()
+                        .fillMaxHeight(),
+                    mapState = mapState,
+                    onSelectClick = onSelectClick
                 )
                 Box(
                     modifier = Modifier
@@ -131,11 +126,12 @@ fun SelectLibraryDialog(
                     bookCopies = bookCopies,
                     libraries = libraries,
                     loading = loading,
-                    onSelectClick = onSelectClick,
                     onDismissRequest = onDismissRequest,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
+                        .weight(1f),
+                    mapState = mapState,
+                    onSelectClick = onSelectClick
                 )
             }
         }
@@ -147,11 +143,13 @@ private fun ListSection(
     bookCopies: List<BookCopy>,
     libraries: List<LibraryDetail>,
     loading: Boolean,
-    onSelectClick: (LibraryDetail) -> Unit,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mapState: MapState? = null,
+    onSelectClick: ((LibraryDetail) -> Unit)? = null
 ) {
     var selectedLibrary: LibraryDetail? by remember { mutableStateOf(null) }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -166,7 +164,11 @@ private fun ListSection(
             val lazyListState = rememberLazyListState()
 
             Text(
-                text = "Pilih perpustakaan",
+                text = if (onSelectClick != null) {
+                    "Pilih perpustakaan"
+                } else {
+                    "Perpustakaan"
+                },
                 modifier = Modifier.padding(horizontal = 24.dp),
                 style = FluentTheme.typography.subtitle
             )
@@ -197,13 +199,35 @@ private fun ListSection(
                         items(libraries) { library ->
                             val availableCopies = bookCopies.count { it.library.id == library.id }
 
+                            val x = GeoUtil.lonToRelativeX(library.longitude)
+                            val y = GeoUtil.latToRelativeY(library.latitude)
+
+                            mapState?.addMarker(
+                                id = library.id.toString(),
+                                x = x,
+                                y = y
+                            ) {
+                                Column {
+                                    Icon(
+                                        imageVector = Icons.Filled.Location,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = FluentTheme.colors.system.attention
+                                    )
+                                }
+                            }
+
                             LibraryItem(
                                 library = library,
                                 availableCopies = availableCopies,
                                 selected = library.id == selectedLibrary?.id,
                                 onClick = {
-                                    if (availableCopies > 0) {
+                                    if (availableCopies > 0 || onSelectClick == null) {
                                         selectedLibrary = library
+                                    }
+
+                                    scope.launch {
+                                        mapState?.centerOnMarker(library.id.toString())
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth()
@@ -224,26 +248,35 @@ private fun ListSection(
                 .padding(horizontal = 25.dp),
             contentAlignment = Alignment.CenterEnd
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                AccentButton(
-                    onClick = {
-                        selectedLibrary?.let {
-                            onSelectClick(it)
-                            onDismissRequest()
-                        }
-                    },
-                    disabled = selectedLibrary == null,
-                    modifier = Modifier.weight(1f)
+            if (onSelectClick != null) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("Pilih")
+                    AccentButton(
+                        onClick = {
+                            selectedLibrary?.let {
+                                onSelectClick(it)
+                                onDismissRequest()
+                            }
+                        },
+                        disabled = selectedLibrary == null,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Pilih")
+                    }
+                    Button(
+                        onClick = onDismissRequest,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Batal")
+                    }
                 }
-                Button(
+            } else {
+                AccentButton(
                     onClick = onDismissRequest,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Batal")
+                    Text("Tutup")
                 }
             }
         }
@@ -319,9 +352,9 @@ private fun LibraryItem(
 
 @Composable
 @Preview
-private fun SelectLibraryDialogPreview() {
+private fun LibraryDialogPreview() {
     AppTheme {
-        SelectLibraryDialog(
+        LibraryDialog(
             bookCopies = BookCopy.dummies[0]!!,
             libraries = LibraryDetail.dummies,
             visible = true,

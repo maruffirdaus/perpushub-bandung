@@ -1,6 +1,5 @@
 package com.perpushub.bandung.ui.auth
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,15 +20,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
+import coil3.compose.AsyncImage
 import com.perpushub.bandung.ui.navigation.AppNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.rememberScrollbarAdapter
-import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import perpushubbandung.composeapp.generated.resources.Res
-import perpushubbandung.composeapp.generated.resources.img_auth
 
 @Composable
 fun AuthScreen(
@@ -116,8 +114,8 @@ fun AuthScreenContent(
 private fun ImageSection(
     modifier: Modifier = Modifier
 ) {
-    Image(
-        painter = painterResource(Res.drawable.img_auth),
+    AsyncImage(
+        model = Res.getUri("drawable/img_auth.png"),
         contentDescription = null,
         modifier = modifier,
         contentScale = ContentScale.Crop

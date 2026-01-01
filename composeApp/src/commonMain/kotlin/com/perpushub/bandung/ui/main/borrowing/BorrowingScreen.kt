@@ -20,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.perpushub.bandung.common.model.LibraryDetail
-import com.perpushub.bandung.ui.common.component.Header
+import com.perpushub.bandung.ui.main.borrowing.component.LoanRequestItem
+import com.perpushub.bandung.ui.main.common.component.Header
+import com.perpushub.bandung.ui.main.common.component.LibraryDialog
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.component.ContentDialog
@@ -107,29 +109,30 @@ fun BorrowingScreenContent(
                     } else {
                         itemsIndexed(uiState.loanRequests) { index, loanRequest ->
                             var selectedLibrary: LibraryDetail? by remember { mutableStateOf(null) }
-                            var isSelectLibraryDialogOpen by remember { mutableStateOf(false) }
+                            var isLibraryDialogOpen by remember { mutableStateOf(false) }
 
-                            _root_ide_package_.com.perpushub.bandung.ui.main.borrowing.component.SelectLibraryDialog(
+                            LibraryDialog(
                                 bookCopies = uiState.bookCopies,
                                 libraries = uiState.libraries,
-                                visible = isSelectLibraryDialogOpen,
-                                loading = uiState.isSelectLibraryDialogLoading,
+                                visible = isLibraryDialogOpen,
+                                onDismissRequest = {
+                                    isLibraryDialogOpen = false
+                                },
+                                mapState = mapState,
                                 onSelectClick = {
                                     selectedLibrary = it
                                 },
-                                onDismissRequest = {
-                                    isSelectLibraryDialogOpen = false
-                                },
-                                mapState = mapState
+                                loading = uiState.isLibraryDialogLoading
                             )
-                            _root_ide_package_.com.perpushub.bandung.ui.main.borrowing.component.LoanRequestItem(
+
+                            LoanRequestItem(
                                 loanRequest = loanRequest,
                                 selectedLibrary = selectedLibrary?.name,
                                 onItemClick = {
                                     onNavigate(MainNavKey.BookDetail(loanRequest.book.id))
                                 },
                                 onSelectLibraryClick = {
-                                    isSelectLibraryDialogOpen = true
+                                    isLibraryDialogOpen = true
                                     onEvent(
                                         BorrowingEvent.OnSelectLibraryDialogDataRefresh(
                                             loanRequest.book.id

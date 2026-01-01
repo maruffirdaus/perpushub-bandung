@@ -29,7 +29,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
 import com.perpushub.bandung.common.model.Book
-import com.perpushub.bandung.ui.common.component.Header
+import com.perpushub.bandung.ui.main.common.component.Header
+import com.perpushub.bandung.ui.main.home.component.HorizontalBookItem
+import com.perpushub.bandung.ui.main.home.component.HorizontalList
+import com.perpushub.bandung.ui.main.home.component.VerticalBookItem
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
@@ -184,7 +187,7 @@ private fun ColumnScope.BookSearchSection(
                 }
             } else {
                 itemsIndexed(searchedBooks) { index, book ->
-                    _root_ide_package_.com.perpushub.bandung.ui.main.home.component.HorizontalBookItem(
+                    HorizontalBookItem(
                         book = book,
                         onClick = {
                             onNavigate(MainNavKey.BookDetail(book.id))
@@ -215,11 +218,11 @@ private fun ColumnScope.BookDiscoverySection(
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {
             item {
-                _root_ide_package_.com.perpushub.bandung.ui.main.home.component.HorizontalList(
+                HorizontalList(
                     title = "Buku teratas",
                     items = topBooks
                 ) { book ->
-                    _root_ide_package_.com.perpushub.bandung.ui.main.home.component.VerticalBookItem(
+                    VerticalBookItem(
                         book = book,
                         onClick = {
                             onNavigate(MainNavKey.BookDetail(book.id))
@@ -237,7 +240,7 @@ private fun ColumnScope.BookDiscoverySection(
                 Spacer(Modifier.height(16.dp))
             }
             itemsIndexed(recommendedBooks) { index, book ->
-                _root_ide_package_.com.perpushub.bandung.ui.main.home.component.HorizontalBookItem(
+                HorizontalBookItem(
                     book = book,
                     onClick = {
                         onNavigate(MainNavKey.BookDetail(book.id))

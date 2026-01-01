@@ -1,4 +1,4 @@
-package com.perpushub.bandung.ui.common.component
+package com.perpushub.bandung.ui.main.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

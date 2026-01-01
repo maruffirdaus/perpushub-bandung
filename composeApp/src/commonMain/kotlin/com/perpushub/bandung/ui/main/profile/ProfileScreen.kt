@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.perpushub.bandung.ui.common.component.Header
+import com.perpushub.bandung.ui.main.common.component.Header
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ScrollbarContainer
