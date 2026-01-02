@@ -26,8 +26,7 @@ import io.github.composefluent.component.NavigationView
 import io.github.composefluent.component.Text
 import io.github.composefluent.component.rememberNavigationState
 import io.github.composefluent.icons.Icons
-import io.github.composefluent.icons.regular.BookAdd
-import io.github.composefluent.icons.regular.Box
+import io.github.composefluent.icons.regular.Book
 import io.github.composefluent.icons.regular.History
 import io.github.composefluent.icons.regular.Home
 import io.github.composefluent.icons.regular.Person
@@ -111,27 +110,8 @@ fun MainScreenContent(
                         },
                         icon = {
                             Icon(
-                                imageVector = Icons.Regular.BookAdd,
+                                imageVector = Icons.Regular.Book,
                                 contentDescription = "Peminjaman"
-                            )
-                        }
-                    )
-                }
-                item {
-                    val isSelected = backStack.lastOrNull() is MainNavKey.Delivery
-
-                    MenuItem(
-                        selected = isSelected,
-                        onClick = {
-                            if (!isSelected) onNavigate(MainNavKey.Delivery)
-                        },
-                        text = {
-                            Text("Pengiriman")
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Regular.Box,
-                                contentDescription = "Pengiriman"
                             )
                         }
                     )

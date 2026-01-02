@@ -25,6 +25,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.common.model.LibraryDetail
 import com.perpushub.bandung.common.model.LoanRequest
+import com.perpushub.bandung.common.model.LoanRequestStatus
 import com.perpushub.bandung.ui.main.common.component.BookCover
 import com.perpushub.bandung.ui.main.common.component.ExpanderItem
 import com.perpushub.bandung.ui.main.common.component.HeaderItemRow
@@ -39,7 +40,7 @@ import io.github.composefluent.component.Text
 
 @OptIn(ExperimentalFluentApi::class)
 @Composable
-fun LoanRequestItem(
+fun CartItem(
     loanRequest: LoanRequest,
     selectedLibrary: String?,
     onItemClick: () -> Unit,
@@ -200,14 +201,14 @@ fun LoanRequestItem(
 
 @Composable
 @Preview
-private fun LoanRequestItemPreview() {
+private fun CartItemPreview() {
     AppTheme {
-        LoanRequestItem(
+        CartItem(
             loanRequest = LoanRequest(
                 id = 0,
                 userId = 0,
                 book = Book.dummies[0],
-                requestAt = "2025-05-25"
+                status = LoanRequestStatus.DRAFT
             ),
             selectedLibrary = LibraryDetail.dummies[0].name,
             onItemClick = {},

@@ -32,8 +32,7 @@ class AuthRepository {
                 id = User.dummies.size,
                 username = username,
                 fullName = fullName,
-                email = email,
-                address = listOf()
+                email = email
             )
         )
     }

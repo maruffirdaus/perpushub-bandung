@@ -3,9 +3,14 @@ package com.perpushub.bandung.ui.main.borrowing
 import com.perpushub.bandung.common.model.BookCopy
 import com.perpushub.bandung.common.model.LibraryDetail
 import com.perpushub.bandung.common.model.LoanRequest
+import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
 
 data class BorrowingUiState(
-    val loanRequests: List<LoanRequest> = listOf(),
+    val selectedTab: BorrowTab = BorrowTab.CART,
+    val carts: List<LoanRequest> = listOf(),
+    val requests: List<LoanRequest> = listOf(),
+    val deliveries: List<String> = listOf(),
+    val loans: List<String> = listOf(),
     val bookCopies: List<BookCopy> = listOf(),
     val libraries: List<LibraryDetail> = listOf(),
     val isLibraryDialogLoading: Boolean = false,

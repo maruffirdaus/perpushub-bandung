@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
-import com.perpushub.bandung.data.repository.LoanRepository
+import com.perpushub.bandung.data.repository.LoanRequestRepository
 import com.perpushub.bandung.service.SessionManager
 import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
@@ -26,7 +26,7 @@ class BookDetailViewModel(
     private val sessionManager: SessionManager,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
-    private val loanRepository: LoanRepository,
+    private val loanRequestRepository: LoanRequestRepository,
     private val tileStreamProvider: TileStreamProvider,
     private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
@@ -131,7 +131,7 @@ class BookDetailViewModel(
                 it.copy(isLoading = true)
             }
             sessionManager.session.value?.userId?.let { userId ->
-                loanRepository.addLoanRequest(userId, id)
+                loanRequestRepository.addDraft(userId, id)
                 onSuccess()
             }
             _uiState.update {

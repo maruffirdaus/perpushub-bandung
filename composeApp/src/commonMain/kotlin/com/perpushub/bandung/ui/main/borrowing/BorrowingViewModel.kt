@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
-import com.perpushub.bandung.data.repository.LoanRepository
+import com.perpushub.bandung.data.repository.LoanRequestRepository
 import com.perpushub.bandung.service.SessionManager
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
+import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
 import com.perpushub.bandung.ui.main.common.util.GeoUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,7 +23,7 @@ import kotlin.math.pow
 
 class BorrowingViewModel(
     private val sessionManager: SessionManager,
-    private val loanRepository: LoanRepository,
+    private val loanRequestRepository: LoanRequestRepository,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
     private val tileStreamProvider: TileStreamProvider,
@@ -78,13 +79,29 @@ class BorrowingViewModel(
 
     fun onEvent(event: BorrowingEvent) {
         when (event) {
-            is BorrowingEvent.OnLoanRequestsRefresh -> refreshLoanRequests()
+            is BorrowingEvent.OnSelectedTabChange -> changeSelectedTab(event.tab)
+            is BorrowingEvent.OnCartsRefresh -> refreshCarts()
+            is BorrowingEvent.OnRequestsRefresh -> {}
+            is BorrowingEvent.OnDeliveriesRefresh -> {}
+            is BorrowingEvent.OnLoansRefresh -> {}
             is BorrowingEvent.OnLibraryDialogRefresh -> refreshLibraryDialog(event.bookId)
-            is BorrowingEvent.OnLoanRequestDelete -> deleteLoanRequest(event.id)
+            is BorrowingEvent.OnCartDelete -> deleteCart(event.id)
         }
     }
 
-    private fun refreshLoanRequests() {
+    private fun changeSelectedTab(tab: BorrowTab) {
+        _uiState.update {
+            it.copy(selectedTab = tab)
+        }
+        when (tab) {
+            BorrowTab.CART -> refreshCarts()
+            BorrowTab.REQUESTS -> refreshCarts()
+            BorrowTab.DELIVERY -> {}
+            BorrowTab.BORROWED -> {}
+        }
+    }
+
+    private fun refreshCarts() {
         val userId = sessionManager.session.value?.userId ?: return
 
         viewModelScope.launch {
@@ -92,7 +109,7 @@ class BorrowingViewModel(
                 it.copy(isLoading = true)
             }
             _uiState.update {
-                it.copy(loanRequests = loanRepository.getLoanRequests(userId))
+                it.copy(carts = loanRequestRepository.getDrafts(userId))
             }
             _uiState.update {
                 it.copy(isLoading = false)
@@ -114,16 +131,16 @@ class BorrowingViewModel(
         }
     }
 
-    private fun deleteLoanRequest(id: Int) {
+    private fun deleteCart(id: Int) {
         val userId = sessionManager.session.value?.userId ?: return
 
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            loanRepository.deleteLoanRequest(id)
+            loanRequestRepository.deleteDraft(id)
             _uiState.update {
-                it.copy(loanRequests = loanRepository.getLoanRequests(userId))
+                it.copy(carts = loanRequestRepository.getDrafts(userId))
             }
             _uiState.update {
                 it.copy(isLoading = false)

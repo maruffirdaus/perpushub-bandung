@@ -19,9 +19,6 @@ sealed interface MainNavKey : NavKey {
     object Borrowing : MainNavKey, NavKey
 
     @Serializable
-    object Delivery : MainNavKey, NavKey
-
-    @Serializable
     object History : MainNavKey, NavKey
 
     @Serializable
@@ -33,7 +30,6 @@ sealed interface MainNavKey : NavKey {
                 subclass(Home::class, Home.serializer())
                 subclass(BookDetail::class, BookDetail.serializer())
                 subclass(Borrowing::class, Borrowing.serializer())
-                subclass(Delivery::class, Delivery.serializer())
                 subclass(History::class, History.serializer())
                 subclass(Profile::class, Profile.serializer())
             }
