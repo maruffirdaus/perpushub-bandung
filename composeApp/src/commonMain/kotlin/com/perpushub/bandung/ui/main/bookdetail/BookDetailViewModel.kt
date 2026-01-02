@@ -6,6 +6,8 @@ import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRepository
 import com.perpushub.bandung.service.SessionManager
+import com.perpushub.bandung.ui.common.messaging.UiError
+import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import com.perpushub.bandung.ui.main.common.util.GeoUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +27,8 @@ class BookDetailViewModel(
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
     private val loanRepository: LoanRepository,
-    private val tileStreamProvider: TileStreamProvider
+    private val tileStreamProvider: TileStreamProvider,
+    private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BookDetailUiState())
     val uiState = _uiState
@@ -91,7 +94,6 @@ class BookDetailViewModel(
             is BookDetailEvent.OnLibraryDialogOpen -> openLibraryDialog()
             is BookDetailEvent.OnLibraryDialogClose -> closeLibraryDialog()
             is BookDetailEvent.OnBorrow -> borrow(event.onSuccess)
-            is BookDetailEvent.OnErrorMessageClear -> clearErrorMessage()
         }
     }
 
@@ -120,9 +122,7 @@ class BookDetailViewModel(
 
     private fun borrow(onSuccess: () -> Unit) {
         if (sessionManager.session.value == null) {
-            _uiState.update {
-                it.copy(errorMessage = "Masuk untuk melanjutkan")
-            }
+            uiMessageManager.emitMessage(UiError("Masuk untuk melanjutkan."))
             return
         }
 
@@ -137,12 +137,6 @@ class BookDetailViewModel(
             _uiState.update {
                 it.copy(isLoading = false)
             }
-        }
-    }
-
-    private fun clearErrorMessage() {
-        _uiState.update {
-            it.copy(errorMessage = null)
         }
     }
 }

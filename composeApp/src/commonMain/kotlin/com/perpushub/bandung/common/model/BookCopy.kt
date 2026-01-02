@@ -307,7 +307,8 @@ data class BookCopy(
                     library = Library.dummies[0],
                     status = BookCopyStatus.AVAILABLE
                 )
-            )
+            ),
+            15 to mutableListOf()
         )
     }
 }

@@ -186,7 +186,7 @@ fun RegisterScreenContent(
         ) {
             AccentButton(
                 onClick = {
-                    onEvent(RegisterEvent.OnRegister)
+                    onEvent(RegisterEvent.OnRegister(onNavigateBack))
                 },
                 modifier = Modifier.weight(1f),
                 disabled = uiState.isLoading

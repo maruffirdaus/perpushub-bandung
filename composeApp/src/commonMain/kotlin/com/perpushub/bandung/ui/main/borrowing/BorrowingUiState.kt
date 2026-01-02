@@ -9,6 +9,5 @@ data class BorrowingUiState(
     val bookCopies: List<BookCopy> = listOf(),
     val libraries: List<LibraryDetail> = listOf(),
     val isLibraryDialogLoading: Boolean = false,
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val isLoading: Boolean = false
 )

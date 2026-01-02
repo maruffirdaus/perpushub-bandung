@@ -34,9 +34,6 @@ import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.AccentButton
 import io.github.composefluent.component.Button
-import io.github.composefluent.component.ContentDialog
-import io.github.composefluent.component.ContentDialogButton
-import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.Icon
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ProgressRingSize
@@ -70,22 +67,6 @@ fun BookDetailScreenContent(
     onNavigate: (NavKey) -> Unit,
     mapState: MapState? = null
 ) {
-    ContentDialog(
-        title = "Terjadi kesalahan",
-        visible = uiState.errorMessage != null,
-        content = {
-            Text("${uiState.errorMessage}")
-        },
-        primaryButtonText = "Tutup",
-        onButtonClick = {
-            when (it) {
-                ContentDialogButton.Primary -> onEvent(BookDetailEvent.OnErrorMessageClear)
-                else -> {}
-            }
-        },
-        size = DialogSize.Min
-    )
-
     if (uiState.isLoading || uiState.book == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -95,6 +76,7 @@ fun BookDetailScreenContent(
         }
     } else {
         LibraryDialog(
+            title = "Ketersediaan buku",
             bookCopies = uiState.bookCopies,
             libraries = uiState.libraries,
             visible = uiState.isLibraryDialogOpen,

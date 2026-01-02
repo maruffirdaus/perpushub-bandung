@@ -43,6 +43,7 @@ import io.github.composefluent.component.AccentButton
 import io.github.composefluent.component.Button
 import io.github.composefluent.component.DialogSize
 import io.github.composefluent.component.FluentDialog
+import io.github.composefluent.component.HyperlinkButton
 import io.github.composefluent.component.Icon
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ScrollbarContainer
@@ -68,6 +69,7 @@ import ovh.plrapps.mapcompose.ui.state.MapState
 
 @Composable
 fun LibraryDialog(
+    title: String,
     bookCopies: List<BookCopy>,
     libraries: List<LibraryDetail>,
     visible: Boolean,
@@ -98,6 +100,7 @@ fun LibraryDialog(
                 modifier = Modifier.aspectRatio(3f / 2f)
             ) {
                 ListSection(
+                    title = title,
                     bookCopies = bookCopies,
                     libraries = libraries,
                     loading = loading,
@@ -130,6 +133,7 @@ fun LibraryDialog(
                     )
                 }
                 ListSection(
+                    title = title,
                     bookCopies = bookCopies,
                     libraries = libraries,
                     loading = loading,
@@ -147,6 +151,7 @@ fun LibraryDialog(
 
 @Composable
 private fun ListSection(
+    title: String,
     bookCopies: List<BookCopy>,
     libraries: List<LibraryDetail>,
     loading: Boolean,
@@ -171,11 +176,7 @@ private fun ListSection(
             val lazyListState = rememberLazyListState()
 
             Text(
-                text = if (onSelectClick != null) {
-                    "Pilih perpustakaan"
-                } else {
-                    "Perpustakaan"
-                },
+                text = title,
                 modifier = Modifier.padding(horizontal = 24.dp),
                 style = FluentTheme.typography.subtitle
             )
@@ -389,9 +390,25 @@ private fun MapSection(
         MapUI(
             state = mapState
         )
-        Column(
+        Row(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
+                .padding(8.dp)
+        ) {
+            HyperlinkButton(
+                navigateUri = "https://www.maptiler.com/copyright/"
+            ) {
+                Text("© MapTiler")
+            }
+            HyperlinkButton(
+                navigateUri = "https://www.openstreetmap.org/copyright"
+            ) {
+                Text("© OpenStreetMap contributors")
+            }
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
                 .padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
@@ -440,6 +457,7 @@ private fun MapSection(
 private fun LibraryDialogPreview() {
     AppTheme {
         LibraryDialog(
+            title = "Pilih perpustakaan",
             bookCopies = BookCopy.dummies[0]!!,
             libraries = LibraryDetail.dummies,
             visible = true,

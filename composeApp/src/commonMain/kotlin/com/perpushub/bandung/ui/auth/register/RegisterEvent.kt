@@ -8,5 +8,5 @@ sealed class RegisterEvent {
     object OnPasswordVisibilityToggle : RegisterEvent()
     class OnConfirmPasswordChange(val password: String) : RegisterEvent()
     object OnConfirmPasswordVisibilityToggle : RegisterEvent()
-    object OnRegister : RegisterEvent()
+    class OnRegister(val onSuccess: () -> Unit) : RegisterEvent()
 }

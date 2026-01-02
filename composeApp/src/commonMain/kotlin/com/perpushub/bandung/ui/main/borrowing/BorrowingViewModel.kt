@@ -6,6 +6,7 @@ import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRepository
 import com.perpushub.bandung.service.SessionManager
+import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import com.perpushub.bandung.ui.main.common.util.GeoUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +25,8 @@ class BorrowingViewModel(
     private val loanRepository: LoanRepository,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
-    private val tileStreamProvider: TileStreamProvider
+    private val tileStreamProvider: TileStreamProvider,
+    private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BorrowingUiState())
     val uiState = _uiState
@@ -79,7 +81,6 @@ class BorrowingViewModel(
             is BorrowingEvent.OnLoanRequestsRefresh -> refreshLoanRequests()
             is BorrowingEvent.OnLibraryDialogRefresh -> refreshLibraryDialog(event.bookId)
             is BorrowingEvent.OnLoanRequestDelete -> deleteLoanRequest(event.id)
-            is BorrowingEvent.OnErrorMessageClear -> clearErrorMessage()
         }
     }
 
@@ -127,12 +128,6 @@ class BorrowingViewModel(
             _uiState.update {
                 it.copy(isLoading = false)
             }
-        }
-    }
-
-    private fun clearErrorMessage() {
-        _uiState.update {
-            it.copy(errorMessage = null)
         }
     }
 }

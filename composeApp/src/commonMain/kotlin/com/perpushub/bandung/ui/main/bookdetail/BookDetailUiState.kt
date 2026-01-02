@@ -11,6 +11,5 @@ data class BookDetailUiState(
     val isLibraryDialogOpen: Boolean = false,
     val isLibraryDialogLoading: Boolean = false,
     val isLoggedIn: Boolean = false,
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val isLoading: Boolean = false
 )

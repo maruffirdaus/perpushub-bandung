@@ -233,7 +233,7 @@ data class BookDetail(
                 language = "en"
             ),
             BookDetail(
-                id = 11,
+                id = 12,
                 title = "Tokyo Ghoul, Vol. 3",
                 authors = listOf(
                     Author.dummies[2]
@@ -251,7 +251,7 @@ data class BookDetail(
                 language = "en"
             ),
             BookDetail(
-                id = 12,
+                id = 13,
                 title = "Tokyo Ghoul",
                 authors = listOf(
                     Author.dummies[2]
@@ -269,7 +269,7 @@ data class BookDetail(
                 language = "en"
             ),
             BookDetail(
-                id = 13,
+                id = 14,
                 title = "Tokyo Ghoul",
                 authors = listOf(
                     Author.dummies[2]
@@ -287,7 +287,7 @@ data class BookDetail(
                 language = "en"
             ),
             BookDetail(
-                id = 14,
+                id = 15,
                 title = "Tokyo Ghoul",
                 authors = listOf(
                     Author.dummies[2]
