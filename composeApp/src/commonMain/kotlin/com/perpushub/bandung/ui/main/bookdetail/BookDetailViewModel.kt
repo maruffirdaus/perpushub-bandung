@@ -6,6 +6,7 @@ import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRepository
 import com.perpushub.bandung.service.SessionManager
+import com.perpushub.bandung.ui.main.common.util.GeoUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -51,6 +52,10 @@ class BookDetailViewModel(
             workerCount = 16
         ) {
             minimumScaleMode(Forced(1 / 2.0.pow(maxLevel - minLevel)))
+            scroll(
+                GeoUtil.lonToRelativeX(107.61809010534124),
+                GeoUtil.latToRelativeY(-6.917757178073011)
+            )
         }.apply {
             addLayer(tileStreamProvider)
         }

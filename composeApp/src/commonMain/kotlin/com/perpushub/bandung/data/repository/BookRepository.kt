@@ -22,12 +22,12 @@ class BookRepository {
 
     suspend fun getTopBooks(): List<Book> {
         delay(0.25.seconds)
-        return Book.dummies.shuffled()
+        return Book.dummies.shuffled().take(10)
     }
 
     suspend fun getRecommendedBooks(): List<Book> {
         delay(0.25.seconds)
-        return Book.dummies.shuffled()
+        return Book.dummies.shuffled().take(15)
     }
 
     suspend fun getBookDetail(id: Int): BookDetail? {

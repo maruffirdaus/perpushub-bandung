@@ -15,19 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
-import coil3.compose.AsyncImage
+import com.perpushub.bandung.ui.auth.component.AuthCover
 import com.perpushub.bandung.ui.navigation.AppNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.rememberScrollbarAdapter
 import org.koin.compose.viewmodel.koinViewModel
-import perpushubbandung.composeapp.generated.resources.Res
 
 @Composable
 fun AuthScreen(
@@ -66,7 +64,7 @@ fun AuthScreenContent(
                 .fillMaxSize()
                 .background(FluentTheme.colors.background.layer.alt)
         ) {
-            ImageSection(
+            AuthCover(
                 modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f)
@@ -99,7 +97,7 @@ fun AuthScreenContent(
                     .background(FluentTheme.colors.background.layer.alt)
                     .verticalScroll(scrollState)
             ) {
-                ImageSection(
+                AuthCover(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(3f / 2f)
@@ -108,18 +106,6 @@ fun AuthScreenContent(
             }
         }
     }
-}
-
-@Composable
-private fun ImageSection(
-    modifier: Modifier = Modifier
-) {
-    AsyncImage(
-        model = Res.getUri("drawable/img_auth.png"),
-        contentDescription = null,
-        modifier = modifier,
-        contentScale = ContentScale.Crop
-    )
 }
 
 @Composable

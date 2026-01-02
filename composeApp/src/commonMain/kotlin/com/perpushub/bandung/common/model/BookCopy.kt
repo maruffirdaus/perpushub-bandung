@@ -127,6 +127,186 @@ data class BookCopy(
                     library = Library.dummies[0],
                     status = BookCopyStatus.AVAILABLE
                 )
+            ),
+            6 to mutableListOf(
+                BookCopy(
+                    id = 14,
+                    book = Book.dummies[6],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 15,
+                    book = Book.dummies[6],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 16,
+                    book = Book.dummies[6],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            7 to mutableListOf(
+                BookCopy(
+                    id = 17,
+                    book = Book.dummies[7],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 18,
+                    book = Book.dummies[7],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 19,
+                    book = Book.dummies[7],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+            ),
+            8 to mutableListOf(
+                BookCopy(
+                    id = 20,
+                    book = Book.dummies[8],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 21,
+                    book = Book.dummies[8],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 22,
+                    book = Book.dummies[8],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            9 to mutableListOf(
+                BookCopy(
+                    id = 23,
+                    book = Book.dummies[9],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 24,
+                    book = Book.dummies[9],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 25,
+                    book = Book.dummies[9],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            10 to mutableListOf(
+                BookCopy(
+                    id = 26,
+                    book = Book.dummies[10],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 27,
+                    book = Book.dummies[10],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 28,
+                    book = Book.dummies[10],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            11 to mutableListOf(
+                BookCopy(
+                    id = 29,
+                    book = Book.dummies[11],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 30,
+                    book = Book.dummies[11],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 31,
+                    book = Book.dummies[11],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            12 to mutableListOf(
+                BookCopy(
+                    id = 32,
+                    book = Book.dummies[12],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 33,
+                    book = Book.dummies[12],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 34,
+                    book = Book.dummies[12],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            13 to mutableListOf(
+                BookCopy(
+                    id = 35,
+                    book = Book.dummies[13],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 36,
+                    book = Book.dummies[13],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 37,
+                    book = Book.dummies[13],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
+            ),
+            14 to mutableListOf(
+                BookCopy(
+                    id = 38,
+                    book = Book.dummies[14],
+                    library = Library.dummies[1],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 39,
+                    book = Book.dummies[14],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                ),
+                BookCopy(
+                    id = 40,
+                    book = Book.dummies[14],
+                    library = Library.dummies[0],
+                    status = BookCopyStatus.AVAILABLE
+                )
             )
         )
     }

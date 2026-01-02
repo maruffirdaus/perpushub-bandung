@@ -18,8 +18,8 @@ val localProperties = Properties().apply {
 }
 
 buildConfig {
-    val apiKey = localProperties.getProperty("api.key") ?: System.getenv("API_KEY") ?: ""
-    buildConfigField("API_KEY", apiKey)
+    packageName("com.perpushub.bandung")
+    buildConfigField("API_KEY", localProperties.getProperty("api.key") ?: System.getenv("API_KEY"))
 }
 
 kotlin {
@@ -80,7 +80,6 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.core)
             implementation(libs.mapcompose)
             implementation(project.dependencies.platform(libs.koin.bom))
@@ -95,6 +94,7 @@ kotlin {
             implementation(libs.windowStyler)
         }
         webMain.dependencies {
+            implementation(libs.ktor.client.js)
             implementation(libs.navigation3.browser)
         }
     }
@@ -135,11 +135,15 @@ compose.desktop {
     application {
         mainClass = "com.perpushub.bandung.MainKt"
 
+        buildTypes.release.proguard {
+            isEnabled.set(false)
+        }
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "PerpusHub Bandung"
             packageVersion = "1.0.0"
 
+            modules("java.net.http")
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             windows {
                 shortcut = true
                 menu = true

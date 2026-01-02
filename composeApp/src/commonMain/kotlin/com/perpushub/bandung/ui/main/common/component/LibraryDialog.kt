@@ -1,6 +1,7 @@
 package com.perpushub.bandung.ui.main.common.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,9 +52,17 @@ import io.github.composefluent.icons.Icons
 import io.github.composefluent.icons.filled.Location
 import io.github.composefluent.icons.regular.CheckmarkCircle
 import io.github.composefluent.icons.regular.Warning
+import io.github.composefluent.icons.regular.ZoomIn
+import io.github.composefluent.icons.regular.ZoomOut
 import kotlinx.coroutines.launch
 import ovh.plrapps.mapcompose.api.addMarker
 import ovh.plrapps.mapcompose.api.centerOnMarker
+import ovh.plrapps.mapcompose.api.centroidX
+import ovh.plrapps.mapcompose.api.centroidY
+import ovh.plrapps.mapcompose.api.maxScale
+import ovh.plrapps.mapcompose.api.minScale
+import ovh.plrapps.mapcompose.api.scale
+import ovh.plrapps.mapcompose.api.scrollTo
 import ovh.plrapps.mapcompose.ui.MapUI
 import ovh.plrapps.mapcompose.ui.state.MapState
 
@@ -99,28 +108,26 @@ fun LibraryDialog(
                     mapState = mapState,
                     onSelectClick = onSelectClick
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.6f)
-                        .fillMaxHeight()
-                ) {
-                    if (mapState != null) {
-                        MapUI(state = mapState)
-                    }
+                if (mapState != null) {
+                    MapSection(
+                        mapState = mapState,
+                        modifier = Modifier
+                            .fillMaxWidth(0.6f)
+                            .fillMaxHeight()
+                    )
                 }
             }
         } else {
             Column(
                 modifier = Modifier.aspectRatio(2f / 3f)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.4f)
-                ) {
-                    if (mapState != null) {
-                        MapUI(state = mapState)
-                    }
+                if (mapState != null) {
+                    MapSection(
+                        mapState = mapState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.4f)
+                    )
                 }
                 ListSection(
                     bookCopies = bookCopies,
@@ -207,7 +214,26 @@ private fun ListSection(
                                 x = x,
                                 y = y
                             ) {
-                                Column {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(FluentTheme.shapes.control)
+                                            .background(FluentTheme.colors.background.layer.alt)
+                                            .border(
+                                                1.dp,
+                                                FluentTheme.colors.stroke.surface.default,
+                                                FluentTheme.shapes.control
+                                            )
+                                            .padding(4.dp)
+                                    ) {
+                                        Text(
+                                            text = library.name,
+                                            style = FluentTheme.typography.caption
+                                        )
+                                    }
                                     Icon(
                                         imageVector = Icons.Filled.Location,
                                         contentDescription = null,
@@ -346,6 +372,65 @@ private fun LibraryItem(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
+        }
+    }
+}
+
+@Composable
+private fun MapSection(
+    mapState: MapState,
+    modifier: Modifier = Modifier
+) {
+    val scope = rememberCoroutineScope()
+
+    Box(
+        modifier = modifier
+    ) {
+        MapUI(
+            state = mapState
+        )
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Button(
+                onClick = {
+                    val currentX = mapState.centroidX
+                    val currentY = mapState.centroidY
+                    val zoomLvl = GeoUtil.scaleToZoomLvl(mapState.scale)
+                    mapState.scale = GeoUtil.zoomLvlToScale(zoomLvl + 1)
+                    scope.launch {
+                        mapState.scrollTo(currentX, currentY)
+                    }
+                },
+                disabled = mapState.scale == mapState.maxScale,
+                iconOnly = true
+            ) {
+                Icon(
+                    imageVector = Icons.Regular.ZoomIn,
+                    contentDescription = "Zoom in"
+                )
+            }
+            Button(
+                onClick = {
+                    val currentX = mapState.centroidX
+                    val currentY = mapState.centroidY
+                    val zoomLvl = GeoUtil.scaleToZoomLvl(mapState.scale)
+                    mapState.scale = GeoUtil.zoomLvlToScale(zoomLvl - 1)
+                    scope.launch {
+                        mapState.scrollTo(currentX, currentY)
+                    }
+                },
+                disabled = mapState.scale == mapState.minScale,
+                iconOnly = true
+            ) {
+                Icon(
+                    imageVector = Icons.Regular.ZoomOut,
+                    contentDescription = "Zoom out"
+                )
+            }
         }
     }
 }

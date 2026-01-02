@@ -123,6 +123,186 @@ data class BookDetail(
                 ),
                 coverUrl = "https://covers.openlibrary.org/b/isbn/9781632360588-L.jpg",
                 language = "en"
+            ),
+            BookDetail(
+                id = 6,
+                title = "A Silent Voice 4",
+                authors = listOf(
+                    Author.dummies[1]
+                ),
+                publisher = "National Geographic Books",
+                publishedDate = "2015-11-24",
+                description = "WORDS OF REASSURANCE Once upon a time, Shoya was terribly cruel to Shoko, his elementary school classmate who couldn’t hear. To make up for his past sins, Shoya has devoted himself to repaying the debt of happiness he owes. So when Shoko faces a romantic setback, Shoya assembles some familiar faces from their past for a trip to the amusement park that may just change things for Shoya, too.",
+                isbn10 = "1632360594",
+                isbn13 = "9781632360595",
+                pageCount = 0,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781632360595-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 7,
+                title = "A Silent Voice 5",
+                authors = listOf(
+                    Author.dummies[1]
+                ),
+                publisher = "National Geographic Books",
+                publishedDate = "2016-01-19",
+                description = "A QUIET CALM Despite their tense pasts, Shoya begins to embrace the friend group that used to terrorize Shoko because she couldn’t hear. Now that summer vacation is in full swing, the crew can work together to film Tomohiro’s eccentric movie. Each fun-filled day lazily passes by, but doubt tugs at Shoya’s heavy heart and he is desperate to cling on to meaningful moments before they are gone…",
+                isbn10 = "1632360608",
+                isbn13 = "9781632360601",
+                pageCount = 0,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781632360601-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 8,
+                title = "A Silent Voice 6",
+                authors = listOf(
+                    Author.dummies[1]
+                ),
+                publisher = "National Geographic Books",
+                publishedDate = "2016-04-19",
+                description = "A SILENT PRAYER Time stands still for both Shoya and Shoko. Triggered by past traumas, Shoya coldly attacked his friends and burnt the bridges he first set out to rebuild. Shoko feels a deep responsibility for this disaster and attempts to pay for it by taking her own life. Meanwhile, each of their friends finally show their true colors. After everything has fallen apart, how will they mend their hearts and put the pieces back together?",
+                isbn10 = "1632360616",
+                isbn13 = "9781632360618",
+                pageCount = 0,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781632360618-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 9,
+                title = "A Silent Voice 7",
+                authors = listOf(
+                    Author.dummies[1]
+                ),
+                publisher = "National Geographic Books",
+                publishedDate = "2016-05-31",
+                description = "SEE YOU LATER Shoya’s life hangs on by a thread after he jumped just in time to save Shoko. Despite the despair, Shoko is determined to move forward and get back what she thinks she has ruined… But broken friendships can heal, too. Quietly, but surely, the disbanded crew finds their spirit — the show must go on! As the movie-making reconvenes, the kids begin to transform the world that had once been so cruel to them. What could the future hold for everyone? Final volume!",
+                isbn10 = "1632362228",
+                isbn13 = "9781632362223",
+                pageCount = 0,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781632362223-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 10,
+                title = "Tokyo Ghoul",
+                authors = listOf(
+                    Author.dummies[2]
+                ),
+                publisher = "VIZ Media LLC",
+                publishedDate = "2015-06-16",
+                description = "Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ken Kaneki is an ordinary college student until a violent encounter turns him into the first half-human half-ghoul hybrid. Trapped between two worlds, he must survive Ghoul turf wars, learn more about Ghoul society and master his new powers. Shy Ken Kaneki is thrilled to go on a date with the beautiful Rize. But it turns out that she’s only interested in his body—eating it, that is. When a morally questionable rescue transforms him into the first half-human half-Ghoul hybrid, Ken is drawn into the dark and violent world of Ghouls, which exists alongside our own.",
+                isbn10 = "1421580365",
+                isbn13 = "9781421580364",
+                pageCount = 224,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781421580364-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 11,
+                title = "Tokyo Ghoul, Vol. 2",
+                authors = listOf(
+                    Author.dummies[2]
+                ),
+                publisher = "VIZ Media LLC",
+                publishedDate = "2015-08-18",
+                description = "Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ken Kaneki is an ordinary college student until a violent encounter turns him into the first half-human half-ghoul hybrid. Trapped between two worlds, he must survive Ghoul turf wars, learn more about Ghoul society and master his new powers. Unable to discard his humanity but equally unable to suppress his Ghoul hunger, Ken finds salvation in the kindness of friendly Ghouls who teach him how to pass as human and eat flesh humanely. But recent upheavals in Ghoul society attract the police like wolves to prey, and they don’t discriminate between conscientious and ravenous Ghouls.",
+                isbn10 = "1421580373",
+                isbn13 = "9781421580371",
+                pageCount = 208,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781421580371-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 11,
+                title = "Tokyo Ghoul, Vol. 3",
+                authors = listOf(
+                    Author.dummies[2]
+                ),
+                publisher = "VIZ Media LLC",
+                publishedDate = "2015-10-20",
+                description = "Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ken Kaneki is an ordinary college student until a violent encounter turns him into the first half-human half-ghoul hybrid. Trapped between two worlds, he must survive Ghoul turf wars, learn more about Ghoul society and master his new powers. Kaneki is still trying to get used to his new life when Commission of Counter Ghoul agents Mado and Amon start sniffing around for Hinami. Kaneki and Touka are going to have to get them off her tail and fast. No easy task now that Kaneki’s got to bring humans and Ghouls to a rapid truce at the same time.",
+                isbn10 = "1421580381",
+                isbn13 = "9781421580388",
+                pageCount = 0,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781421580388-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 12,
+                title = "Tokyo Ghoul",
+                authors = listOf(
+                    Author.dummies[2]
+                ),
+                publisher = "VIZ Media LLC",
+                publishedDate = "2015-12-15",
+                description = "Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ken Kaneki is an ordinary college student until a violent encounter turns him into the first half-human half-ghoul hybrid. Trapped between two worlds, he must survive Ghoul turf wars, learn more about Ghoul society and master his new powers. Kaneki meets Shu Tsukiyama, known as The Gourmet for his interesting and sadistic tastes. And Kaneki learns more about what happened to Rize and what it means to be a One-Eyed Ghoul.",
+                isbn10 = "142158039X",
+                isbn13 = "9781421580395",
+                pageCount = 192,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781421580395-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 13,
+                title = "Tokyo Ghoul",
+                authors = listOf(
+                    Author.dummies[2]
+                ),
+                publisher = "VIZ Media LLC",
+                publishedDate = "2016-02-16",
+                description = "Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ken Kaneki is an ordinary college student until a violent encounter turns him into the first half-human half-ghoul hybrid. Trapped between two worlds, he must survive Ghoul turf wars, learn more about Ghoul society and master his new powers. Kaneki, Nishio, and Touka struggle to work together to rescue their human friend Kimi while Ghoul Investigator deaths skyrocket in Wards 9 through 12. When reinforcements are called in on both sides, the stakes are suddenly higher than ever.",
+                isbn10 = "1421580403",
+                isbn13 = "9781421580401",
+                pageCount = 200,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781421580401-L.jpg",
+                language = "en"
+            ),
+            BookDetail(
+                id = 14,
+                title = "Tokyo Ghoul",
+                authors = listOf(
+                    Author.dummies[2]
+                ),
+                publisher = "VIZ Media LLC",
+                publishedDate = "2016-04-19",
+                description = "Ghouls live among us, the same as normal people in every way—except their craving for human flesh. Ken Kaneki is an ordinary college student until a violent encounter turns him into the first half-human half-ghoul hybrid. Trapped between two worlds, he must survive Ghoul turf wars, learn more about Ghoul society and master his new powers. Things heat up in the Ward Eleven as the CCG investigates the high rate of Investigator deaths. Kaneki has an explosive run-in with Aogiri Tree, the Ghoul Gang, run by a Ghoul known only as the Sekigan King.",
+                isbn10 = "1421580411",
+                isbn13 = "9781421580418",
+                pageCount = 200,
+                categories = listOf(
+                    Category.dummies[0]
+                ),
+                coverUrl = "https://covers.openlibrary.org/b/isbn/9781421580418-L.jpg",
+                language = "en"
             )
         )
     }

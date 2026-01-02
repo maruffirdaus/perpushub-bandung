@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +58,10 @@ fun BorrowingScreenContent(
     onNavigate: (NavKey) -> Unit,
     mapState: MapState? = null
 ) {
+    LaunchedEffect(Unit) {
+        onEvent(BorrowingEvent.OnLoanRequestsRefresh)
+    }
+
     ContentDialog(
         title = "Terjadi kesalahan",
         visible = uiState.errorMessage != null,
@@ -133,11 +138,7 @@ fun BorrowingScreenContent(
                                 },
                                 onSelectLibraryClick = {
                                     isLibraryDialogOpen = true
-                                    onEvent(
-                                        BorrowingEvent.OnSelectLibraryDialogDataRefresh(
-                                            loanRequest.book.id
-                                        )
-                                    )
+                                    onEvent(BorrowingEvent.OnLibraryDialogRefresh(loanRequest.book.id))
                                 },
                                 onContinueClick = { dueDate -> },
                                 onDeleteClick = {

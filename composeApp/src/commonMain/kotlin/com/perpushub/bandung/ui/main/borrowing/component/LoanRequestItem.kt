@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,15 +18,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import coil3.compose.AsyncImage
 import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.common.model.LibraryDetail
 import com.perpushub.bandung.common.model.LoanRequest
+import com.perpushub.bandung.ui.main.common.component.BookCover
 import com.perpushub.bandung.ui.main.common.component.ExpanderItem
 import com.perpushub.bandung.ui.main.common.component.HeaderItemRow
 import com.perpushub.bandung.ui.main.common.component.ItemRow
@@ -75,14 +73,10 @@ fun LoanRequestItem(
             .padding(16.dp)
     ) {
         Row {
-            AsyncImage(
-                model = loanRequest.book.coverUrl,
+            BookCover(
+                coverUrl = loanRequest.book.coverUrl,
                 contentDescription = loanRequest.book.title,
-                modifier = Modifier
-                    .width(80.dp)
-                    .aspectRatio(2f / 3f)
-                    .clip(FluentTheme.shapes.control),
-                contentScale = ContentScale.Crop
+                width = 80.dp
             )
             Spacer(Modifier.width(12.dp))
             Column(

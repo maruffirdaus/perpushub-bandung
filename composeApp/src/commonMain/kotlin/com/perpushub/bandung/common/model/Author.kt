@@ -13,6 +13,10 @@ data class Author(
             Author(
                 id = 1,
                 name = "Yoshitoki Oima"
+            ),
+            Author(
+                id = 2,
+                name = "Sui Ishida"
             )
         )
     }

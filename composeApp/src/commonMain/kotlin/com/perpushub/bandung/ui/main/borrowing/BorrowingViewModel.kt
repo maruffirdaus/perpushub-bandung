@@ -6,6 +6,7 @@ import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRepository
 import com.perpushub.bandung.service.SessionManager
+import com.perpushub.bandung.ui.main.common.util.GeoUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -50,23 +51,22 @@ class BorrowingViewModel(
             workerCount = 16
         ) {
             minimumScaleMode(Forced(1 / 2.0.pow(maxLevel - minLevel)))
+            scroll(
+                GeoUtil.lonToRelativeX(107.61809010534124),
+                GeoUtil.latToRelativeY(-6.917757178073011)
+            )
         }.apply {
             addLayer(tileStreamProvider)
         }
     }
 
     private fun loadInitialData() {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             _uiState.update {
-                it.copy(
-                    loanRequests = loanRepository.getLoanRequests(userId),
-                    libraries = libraryRepository.getLibraries()
-                )
+                it.copy(libraries = libraryRepository.getLibraries())
             }
             _uiState.update {
                 it.copy(isLoading = false)
@@ -76,16 +76,30 @@ class BorrowingViewModel(
 
     fun onEvent(event: BorrowingEvent) {
         when (event) {
-            is BorrowingEvent.OnSelectLibraryDialogDataRefresh -> refreshSelectLibraryDialogData(
-                event.bookId
-            )
-
+            is BorrowingEvent.OnLoanRequestsRefresh -> refreshLoanRequests()
+            is BorrowingEvent.OnLibraryDialogRefresh -> refreshLibraryDialog(event.bookId)
             is BorrowingEvent.OnLoanRequestDelete -> deleteLoanRequest(event.id)
             is BorrowingEvent.OnErrorMessageClear -> clearErrorMessage()
         }
     }
 
-    private fun refreshSelectLibraryDialogData(bookId: Int) {
+    private fun refreshLoanRequests() {
+        val userId = sessionManager.session.value?.userId ?: return
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            _uiState.update {
+                it.copy(loanRequests = loanRepository.getLoanRequests(userId))
+            }
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
+        }
+    }
+
+    private fun refreshLibraryDialog(bookId: Int) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLibraryDialogLoading = true)
