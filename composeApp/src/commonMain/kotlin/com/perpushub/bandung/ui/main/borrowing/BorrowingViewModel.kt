@@ -93,12 +93,6 @@ class BorrowingViewModel(
         _uiState.update {
             it.copy(selectedTab = tab)
         }
-        when (tab) {
-            BorrowTab.CART -> refreshCarts()
-            BorrowTab.REQUESTS -> refreshCarts()
-            BorrowTab.DELIVERY -> {}
-            BorrowTab.BORROWED -> {}
-        }
     }
 
     private fun refreshCarts() {

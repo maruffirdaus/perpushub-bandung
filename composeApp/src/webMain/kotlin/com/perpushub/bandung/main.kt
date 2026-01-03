@@ -37,7 +37,6 @@ fun main() {
                         )
 
                         is MainNavKey.Borrowing -> buildBrowserHistoryFragment("borrowing")
-                        is MainNavKey.Delivery -> buildBrowserHistoryFragment("delivery")
                         is MainNavKey.History -> buildBrowserHistoryFragment("history")
                         is MainNavKey.Profile -> buildBrowserHistoryFragment("profile")
                         else -> null

@@ -87,63 +87,64 @@ fun BookDetailScreenContent(
             loading = uiState.isLibraryDialogLoading
         )
 
-        BoxWithConstraints {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val scrollState = rememberScrollState()
 
-                Header(
-                    text = {
-                        Column {
-                            Text(
-                                text = uiState.book.title,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-                            Text(
-                                text = if (uiState.book.authors.isEmpty()) {
-                                    "Unknown"
-                                } else {
-                                    uiState.book.authors.joinToString(", ") { it.name }
-                                },
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                style = FluentTheme.typography.body
-                            )
-                        }
-                    },
-                    actions = {
-                        Button(
-                            onClick = {
-                                onEvent(BookDetailEvent.OnLibraryDialogOpen)
-                            }
-                        ) {
-                            Text("Cek ketersediaan")
-                        }
-                        ActionDivider()
-                        AccentButton(
-                            onClick = {
-                                onEvent(
-                                    BookDetailEvent.OnBorrow {
-                                        onNavigate(MainNavKey.Borrowing)
-                                    }
-                                )
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Regular.BookAdd,
-                                contentDescription = "Pinjam"
-                            )
-                            Text("Pinjam")
-                        }
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val scrollState = rememberScrollState()
+
+            Header(
+                text = {
+                    Column {
+                        Text(
+                            text = uiState.book.title,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = if (uiState.book.authors.isEmpty()) {
+                                "Unknown"
+                            } else {
+                                uiState.book.authors.joinToString(", ") { it.name }
+                            },
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                            style = FluentTheme.typography.body
+                        )
                     }
-                )
-                ScrollbarContainer(
-                    adapter = rememberScrollbarAdapter(scrollState),
-                    modifier = Modifier.weight(1f)
-                ) {
-                    val modifier = Modifier
+                },
+                actions = {
+                    Button(
+                        onClick = {
+                            onEvent(BookDetailEvent.OnLibraryDialogOpen)
+                        }
+                    ) {
+                        Text("Cek ketersediaan")
+                    }
+                    ActionDivider()
+                    AccentButton(
+                        onClick = {
+                            onEvent(
+                                BookDetailEvent.OnBorrow {
+                                    onNavigate(MainNavKey.Borrowing)
+                                }
+                            )
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Regular.BookAdd,
+                            contentDescription = "Pinjam"
+                        )
+                        Text("Pinjam")
+                    }
+                }
+            )
+            ScrollbarContainer(
+                adapter = rememberScrollbarAdapter(scrollState),
+                modifier = Modifier.weight(1f)
+            ) {
+                BoxWithConstraints(
+                    modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                         .padding(
@@ -151,11 +152,9 @@ fun BookDetailScreenContent(
                             end = 32.dp,
                             bottom = 32.dp
                         )
-
-                    if (this@BoxWithConstraints.maxWidth >= 800.dp) {
-                        Row(
-                            modifier = modifier
-                        ) {
+                ) {
+                    if (maxWidth >= 736.dp) {
+                        Row {
                             BookCoverSection(
                                 book = uiState.book
                             )
@@ -165,9 +164,7 @@ fun BookDetailScreenContent(
                             )
                         }
                     } else {
-                        Column(
-                            modifier = modifier
-                        ) {
+                        Column {
                             BookCoverSection(
                                 book = uiState.book,
                                 modifier = Modifier.fillMaxWidth()

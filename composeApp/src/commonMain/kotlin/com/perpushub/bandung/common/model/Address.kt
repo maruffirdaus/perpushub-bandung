@@ -2,6 +2,7 @@ package com.perpushub.bandung.common.model
 
 data class Address(
     val id: Int,
+    val userId: Int,
     val title: String,
     val recipientName: String,
     val phoneNumber: String,
@@ -15,6 +16,7 @@ data class Address(
             0 to mutableListOf(
                 Address(
                     id = 0,
+                    userId = 0,
                     title = "Kampus",
                     recipientName = "Maruf Firdaus",
                     phoneNumber = "082133628466",

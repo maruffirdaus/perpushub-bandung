@@ -3,6 +3,7 @@ package com.perpushub.bandung.ui.main.borrowing
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -65,14 +66,19 @@ fun BorrowingScreenContent(
     onNavigate: (NavKey) -> Unit,
     mapState: MapState? = null
 ) {
-    LaunchedEffect(Unit) {
-        onEvent(BorrowingEvent.OnCartsRefresh)
+    LaunchedEffect(uiState.selectedTab) {
+        when (uiState.selectedTab) {
+            BorrowTab.CART -> onEvent(BorrowingEvent.OnCartsRefresh)
+            BorrowTab.REQUESTS -> onEvent(BorrowingEvent.OnRequestsRefresh)
+            BorrowTab.DELIVERY -> onEvent(BorrowingEvent.OnDeliveriesRefresh)
+            BorrowTab.BORROWED -> onEvent(BorrowingEvent.OnLoansRefresh)
+        }
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        val lazyRowState = rememberLazyListState()
+        val lazyListState = rememberLazyListState()
 
         Spacer(Modifier.height(32.dp))
         Text(
@@ -84,9 +90,9 @@ fun BorrowingScreenContent(
         )
         Spacer(Modifier.height(12.dp))
         LazyRow(
-            state = lazyRowState,
+            state = lazyListState,
             contentPadding = PaddingValues(horizontal = 32.dp),
-            flingBehavior = rememberSnapFlingBehavior(lazyRowState)
+            flingBehavior = rememberSnapFlingBehavior(lazyListState)
         ) {
             items(BorrowTab.entries) { tab ->
                 SelectorBarItem(
@@ -117,85 +123,94 @@ fun BorrowingScreenContent(
                 ProgressRing()
             }
         } else {
-            val lazyColumnState = rememberLazyListState()
+            when (uiState.selectedTab) {
+                BorrowTab.CART -> CartSection(
+                    uiState = uiState,
+                    onEvent = onEvent,
+                    onNavigate = onNavigate,
+                    mapState = mapState
+                )
 
-            ScrollbarContainer(
-                adapter = rememberScrollbarAdapter(lazyColumnState),
-                modifier = Modifier.weight(1f)
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    state = lazyColumnState,
-                    contentPadding = PaddingValues(
-                        start = 32.dp,
-                        end = 32.dp,
-                        bottom = 32.dp
+                BorrowTab.REQUESTS -> {}
+                BorrowTab.DELIVERY -> {}
+                BorrowTab.BORROWED -> {}
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.CartSection(
+    uiState: BorrowingUiState,
+    onEvent: (BorrowingEvent) -> Unit,
+    onNavigate: (NavKey) -> Unit,
+    mapState: MapState? = null
+) {
+    val lazyListState = rememberLazyListState()
+
+    ScrollbarContainer(
+        adapter = rememberScrollbarAdapter(lazyListState),
+        modifier = Modifier.weight(1f)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                bottom = 32.dp
+            )
+        ) {
+            if (uiState.carts.isEmpty()) {
+                item {
+                    Text("Keranjang masih kosong. Jelajahi buku di halaman Beranda.")
+                }
+            } else {
+                itemsIndexed(uiState.carts) { index, loanRequest ->
+                    var selectedLibrary: LibraryDetail? by remember { mutableStateOf(null) }
+                    var isLibraryDialogOpen by remember { mutableStateOf(false) }
+
+                    LibraryDialog(
+                        title = "Pilih perpustakaan",
+                        bookCopies = uiState.bookCopies,
+                        libraries = uiState.libraries,
+                        visible = isLibraryDialogOpen,
+                        onDismissRequest = {
+                            isLibraryDialogOpen = false
+                        },
+                        mapState = mapState,
+                        onSelectClick = {
+                            selectedLibrary = it
+                        },
+                        loading = uiState.isLibraryDialogLoading
                     )
-                ) {
-                    when (uiState.selectedTab) {
-                        BorrowTab.CART -> {
-                            if (uiState.carts.isEmpty()) {
-                                item {
-                                    Text("Keranjang masih kosong. Jelajahi buku di halaman Beranda.")
-                                }
-                            } else {
-                                itemsIndexed(uiState.carts) { index, loanRequest ->
-                                    var selectedLibrary: LibraryDetail? by remember {
-                                        mutableStateOf(
-                                            null
-                                        )
-                                    }
-                                    var isLibraryDialogOpen by remember { mutableStateOf(false) }
 
-                                    LibraryDialog(
-                                        title = "Pilih perpustakaan",
-                                        bookCopies = uiState.bookCopies,
-                                        libraries = uiState.libraries,
-                                        visible = isLibraryDialogOpen,
-                                        onDismissRequest = {
-                                            isLibraryDialogOpen = false
-                                        },
-                                        mapState = mapState,
-                                        onSelectClick = {
-                                            selectedLibrary = it
-                                        },
-                                        loading = uiState.isLibraryDialogLoading
-                                    )
-
-                                    CartItem(
-                                        loanRequest = loanRequest,
-                                        selectedLibrary = selectedLibrary?.name,
-                                        onItemClick = {
-                                            onNavigate(MainNavKey.BookDetail(loanRequest.book.id))
-                                        },
-                                        onSelectLibraryClick = {
-                                            isLibraryDialogOpen = true
-                                            onEvent(
-                                                BorrowingEvent.OnLibraryDialogRefresh(
-                                                    loanRequest.book.id
-                                                )
-                                            )
-                                        },
-                                        onContinueClick = { dueDate -> },
-                                        onDeleteClick = {
-                                            onEvent(
-                                                BorrowingEvent.OnCartDelete(
-                                                    loanRequest.id
-                                                )
-                                            )
-                                        },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        defaultExpanded = index == 0,
-                                        alternate = index % 2 == 0
-                                    )
-                                }
-                            }
-                        }
-
-                        BorrowTab.REQUESTS -> {}
-                        BorrowTab.DELIVERY -> {}
-                        BorrowTab.BORROWED -> {}
-                    }
+                    CartItem(
+                        loanRequest = loanRequest,
+                        selectedLibrary = selectedLibrary?.name,
+                        onItemClick = {
+                            onNavigate(MainNavKey.BookDetail(loanRequest.book.id))
+                        },
+                        onSelectLibraryClick = {
+                            isLibraryDialogOpen = true
+                            onEvent(
+                                BorrowingEvent.OnLibraryDialogRefresh(
+                                    loanRequest.book.id
+                                )
+                            )
+                        },
+                        onContinueClick = { dueDate -> },
+                        onDeleteClick = {
+                            onEvent(
+                                BorrowingEvent.OnCartDelete(
+                                    loanRequest.id
+                                )
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        defaultExpanded = index == 0,
+                        alternate = index % 2 == 0
+                    )
                 }
             }
         }
