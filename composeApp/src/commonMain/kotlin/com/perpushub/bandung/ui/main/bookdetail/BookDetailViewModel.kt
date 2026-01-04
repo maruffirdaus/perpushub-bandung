@@ -77,14 +77,19 @@ class BookDetailViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            _uiState.update {
-                it.copy(
-                    book = bookRepository.getBookDetail(id),
-                    libraries = libraryRepository.getLibraries()
-                )
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            try {
+                _uiState.update {
+                    it.copy(
+                        book = bookRepository.getBookDetail(id),
+                        libraries = libraryRepository.getLibraries()
+                    )
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }
@@ -105,11 +110,16 @@ class BookDetailViewModel(
             _uiState.update {
                 it.copy(isLibraryDialogLoading = true)
             }
-            _uiState.update {
-                it.copy(bookCopies = bookRepository.getBookCopies(id))
-            }
-            _uiState.update {
-                it.copy(isLibraryDialogLoading = false)
+            try {
+                _uiState.update {
+                    it.copy(bookCopies = bookRepository.getBookCopies(id))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLibraryDialogLoading = false)
+                }
             }
         }
     }
@@ -130,12 +140,17 @@ class BookDetailViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            sessionManager.session.value?.userId?.let { userId ->
-                loanRequestRepository.addDraft(userId, id)
-                onSuccess()
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            try {
+                sessionManager.session.value?.userId?.let { userId ->
+                    loanRequestRepository.addDraft(userId, id)
+                    onSuccess()
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }

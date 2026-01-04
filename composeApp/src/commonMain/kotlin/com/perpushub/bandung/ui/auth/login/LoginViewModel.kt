@@ -63,9 +63,10 @@ class LoginViewModel(
                 sessionManager.login(uiState.value.email, uiState.value.password)
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }

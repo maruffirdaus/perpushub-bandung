@@ -43,8 +43,10 @@ import io.github.composefluent.component.Text
 fun CartItem(
     loanRequest: LoanRequest,
     selectedLibrary: String?,
+    selectedAddress: String?,
     onItemClick: () -> Unit,
     onSelectLibraryClick: () -> Unit,
+    onSelectAddressClick: () -> Unit,
     onContinueClick: (String) -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -135,10 +137,10 @@ fun CartItem(
                 items = listOf(
                     {
                         Button(
-                            onClick = {}
+                            onClick = onSelectAddressClick
                         ) {
                             Text(
-                                text = "Pilih alamat",
+                                text = selectedAddress ?: "Pilih alamat",
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1
                             )
@@ -211,8 +213,10 @@ private fun CartItemPreview() {
                 status = LoanRequestStatus.DRAFT
             ),
             selectedLibrary = LibraryDetail.dummies[0].name,
+            selectedAddress = LibraryDetail.dummies[0].name,
             onItemClick = {},
             onSelectLibraryClick = {},
+            onSelectAddressClick = {},
             onContinueClick = {},
             onDeleteClick = {}
         )

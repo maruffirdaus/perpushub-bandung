@@ -1,5 +1,6 @@
 package com.perpushub.bandung.ui.main.borrowing
 
+import com.perpushub.bandung.common.model.Address
 import com.perpushub.bandung.common.model.BookCopy
 import com.perpushub.bandung.common.model.LibraryDetail
 import com.perpushub.bandung.common.model.LoanRequest
@@ -13,6 +14,7 @@ data class BorrowingUiState(
     val loans: List<String> = listOf(),
     val bookCopies: List<BookCopy> = listOf(),
     val libraries: List<LibraryDetail> = listOf(),
+    val addresses: List<Address> = listOf(),
     val isLibraryDialogLoading: Boolean = false,
     val isLoading: Boolean = false
 )

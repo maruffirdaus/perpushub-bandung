@@ -7,8 +7,8 @@ data class BookCopy(
     val status: BookCopyStatus
 ) {
     companion object {
-        val dummies = mapOf(
-            0 to mutableListOf(
+        val dummies = mutableMapOf(
+            0 to listOf(
                 BookCopy(
                     id = 0,
                     book = Book.dummies[0],
@@ -28,7 +28,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            1 to mutableListOf(
+            1 to listOf(
                 BookCopy(
                     id = 3,
                     book = Book.dummies[1],
@@ -48,7 +48,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            2 to mutableListOf(
+            2 to listOf(
                 BookCopy(
                     id = 6,
                     book = Book.dummies[2],
@@ -68,7 +68,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            3 to mutableListOf(
+            3 to listOf(
                 BookCopy(
                     id = 9,
                     book = Book.dummies[3],
@@ -88,7 +88,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            4 to mutableListOf(
+            4 to listOf(
                 BookCopy(
                     id = 12,
                     book = Book.dummies[4],
@@ -108,7 +108,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            5 to mutableListOf(
+            5 to listOf(
                 BookCopy(
                     id = 13,
                     book = Book.dummies[5],
@@ -128,7 +128,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            6 to mutableListOf(
+            6 to listOf(
                 BookCopy(
                     id = 14,
                     book = Book.dummies[6],
@@ -148,7 +148,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            7 to mutableListOf(
+            7 to listOf(
                 BookCopy(
                     id = 17,
                     book = Book.dummies[7],
@@ -168,7 +168,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 ),
             ),
-            8 to mutableListOf(
+            8 to listOf(
                 BookCopy(
                     id = 20,
                     book = Book.dummies[8],
@@ -188,7 +188,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            9 to mutableListOf(
+            9 to listOf(
                 BookCopy(
                     id = 23,
                     book = Book.dummies[9],
@@ -208,7 +208,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            10 to mutableListOf(
+            10 to listOf(
                 BookCopy(
                     id = 26,
                     book = Book.dummies[10],
@@ -228,7 +228,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            11 to mutableListOf(
+            11 to listOf(
                 BookCopy(
                     id = 29,
                     book = Book.dummies[11],
@@ -248,7 +248,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            12 to mutableListOf(
+            12 to listOf(
                 BookCopy(
                     id = 32,
                     book = Book.dummies[12],
@@ -268,7 +268,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            13 to mutableListOf(
+            13 to listOf(
                 BookCopy(
                     id = 35,
                     book = Book.dummies[13],
@@ -288,7 +288,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            14 to mutableListOf(
+            14 to listOf(
                 BookCopy(
                     id = 38,
                     book = Book.dummies[14],
@@ -308,7 +308,7 @@ data class BookCopy(
                     status = BookCopyStatus.AVAILABLE
                 )
             ),
-            15 to mutableListOf()
+            15 to listOf()
         )
     }
 }

@@ -8,5 +8,7 @@ data class ProfileUiState(
     val selectedTab: ProfileTab = ProfileTab.ACCOUNT,
     val user: User? = null,
     val addresses: List<Address> = listOf(),
+    val addressToEdit: Address? = null,
+    val isAddEditAddressDialogOpen: Boolean = false,
     val isLoading: Boolean = false
 )

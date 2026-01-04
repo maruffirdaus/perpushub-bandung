@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -88,62 +89,67 @@ fun LibraryDialog(
         360.dp
     }
 
-    FluentDialog(
-        visible = visible,
-        size = DialogSize(
-            min = width,
-            max = width
-        )
-    ) {
-        if (isAtLeastExpandedBreakpoint) {
-            Row(
-                modifier = Modifier.aspectRatio(3f / 2f)
-            ) {
-                ListSection(
-                    title = title,
-                    bookCopies = bookCopies,
-                    libraries = libraries,
-                    loading = loading,
-                    onDismissRequest = onDismissRequest,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight(),
-                    mapState = mapState,
-                    onSelectClick = onSelectClick
-                )
-                if (mapState != null) {
-                    MapSection(
-                        mapState = mapState,
-                        modifier = Modifier
-                            .fillMaxWidth(0.6f)
-                            .fillMaxHeight()
-                    )
-                }
+    BoxWithConstraints {
+        val maxDialogWidth = maxWidth - 16.dp
+
+        FluentDialog(
+            visible = visible,
+            size = if (maxDialogWidth > width) {
+                DialogSize(width, width)
+            } else {
+                DialogSize(maxDialogWidth, maxDialogWidth)
             }
-        } else {
-            Column(
-                modifier = Modifier.aspectRatio(2f / 3f)
-            ) {
-                if (mapState != null) {
-                    MapSection(
+        ) {
+            if (isAtLeastExpandedBreakpoint) {
+                Row(
+                    modifier = Modifier.aspectRatio(3f / 2f)
+                ) {
+                    ListSection(
+                        title = title,
+                        bookCopies = bookCopies,
+                        libraries = libraries,
+                        loading = loading,
+                        onDismissRequest = onDismissRequest,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
                         mapState = mapState,
+                        onSelectClick = onSelectClick
+                    )
+                    if (mapState != null) {
+                        MapSection(
+                            mapState = mapState,
+                            modifier = Modifier
+                                .fillMaxWidth(0.6f)
+                                .fillMaxHeight()
+                        )
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier.aspectRatio(2f / 3f)
+                ) {
+                    if (mapState != null) {
+                        MapSection(
+                            mapState = mapState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.4f)
+                        )
+                    }
+                    ListSection(
+                        title = title,
+                        bookCopies = bookCopies,
+                        libraries = libraries,
+                        loading = loading,
+                        onDismissRequest = onDismissRequest,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(0.4f)
+                            .weight(1f),
+                        mapState = mapState,
+                        onSelectClick = onSelectClick
                     )
                 }
-                ListSection(
-                    title = title,
-                    bookCopies = bookCopies,
-                    libraries = libraries,
-                    loading = loading,
-                    onDismissRequest = onDismissRequest,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    mapState = mapState,
-                    onSelectClick = onSelectClick
-                )
             }
         }
     }
@@ -398,12 +404,20 @@ private fun MapSection(
             HyperlinkButton(
                 navigateUri = "https://www.maptiler.com/copyright/"
             ) {
-                Text("© MapTiler")
+                Text(
+                    text = "© MapTiler",
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
             HyperlinkButton(
                 navigateUri = "https://www.openstreetmap.org/copyright"
             ) {
-                Text("© OpenStreetMap contributors")
+                Text(
+                    text = "© OpenStreetMap contributors",
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
             }
         }
         Column(

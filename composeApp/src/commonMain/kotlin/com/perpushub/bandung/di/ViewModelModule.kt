@@ -19,7 +19,7 @@ val viewModelModule = module {
     viewModel { MainViewModel(get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { (id: Int) -> BookDetailViewModel(id, get(), get(), get(), get(), get(), get()) }
-    viewModel { BorrowingViewModel(get(), get(), get(), get(), get(), get()) }
+    viewModel { BorrowingViewModel(get(), get(), get(), get(), get(), get(), get()) }
     viewModel { HistoryViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get()) }
 }

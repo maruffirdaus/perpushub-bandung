@@ -3,6 +3,7 @@ package com.perpushub.bandung.ui.main.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
+import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,14 +32,19 @@ class HomeViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            _uiState.update {
-                it.copy(
-                    topBooks = bookRepository.getTopBooks(),
-                    recommendedBooks = bookRepository.getRecommendedBooks()
-                )
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            try {
+                _uiState.update {
+                    it.copy(
+                        topBooks = bookRepository.getTopBooks(),
+                        recommendedBooks = bookRepository.getRecommendedBooks()
+                    )
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }
@@ -64,15 +70,20 @@ class HomeViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            uiState.value.searchQuery.let { query ->
-                if (query.isNotBlank()) {
-                    _uiState.update {
-                        it.copy(searchedBooks = bookRepository.searchBooks(uiState.value.searchQuery.trim()))
+            try {
+                uiState.value.searchQuery.let { query ->
+                    if (query.isNotBlank()) {
+                        _uiState.update {
+                            it.copy(searchedBooks = bookRepository.searchBooks(uiState.value.searchQuery.trim()))
+                        }
                     }
                 }
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }

@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRequestRepository
+import com.perpushub.bandung.data.repository.UserRepository
 import com.perpushub.bandung.service.SessionManager
+import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
 import com.perpushub.bandung.ui.main.common.util.GeoUtil
@@ -26,6 +28,7 @@ class BorrowingViewModel(
     private val loanRequestRepository: LoanRequestRepository,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
+    private val userRepository: UserRepository,
     private val tileStreamProvider: TileStreamProvider,
     private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
@@ -68,11 +71,21 @@ class BorrowingViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            _uiState.update {
-                it.copy(libraries = libraryRepository.getLibraries())
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            try {
+                _uiState.update {
+                    it.copy(
+                        libraries = libraryRepository.getLibraries(),
+                        addresses = sessionManager.session.value?.userId?.let { userId ->
+                            userRepository.getAddresses(userId)
+                        } ?: listOf()
+                    )
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }
@@ -102,11 +115,16 @@ class BorrowingViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            _uiState.update {
-                it.copy(carts = loanRequestRepository.getDrafts(userId))
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            try {
+                _uiState.update {
+                    it.copy(carts = loanRequestRepository.getDrafts(userId))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }
@@ -116,11 +134,16 @@ class BorrowingViewModel(
             _uiState.update {
                 it.copy(isLibraryDialogLoading = true)
             }
-            _uiState.update {
-                it.copy(bookCopies = bookRepository.getBookCopies(bookId))
-            }
-            _uiState.update {
-                it.copy(isLibraryDialogLoading = false)
+            try {
+                _uiState.update {
+                    it.copy(bookCopies = bookRepository.getBookCopies(bookId))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLibraryDialogLoading = false)
+                }
             }
         }
     }
@@ -132,12 +155,17 @@ class BorrowingViewModel(
             _uiState.update {
                 it.copy(isLoading = true)
             }
-            loanRequestRepository.deleteDraft(id)
-            _uiState.update {
-                it.copy(carts = loanRequestRepository.getDrafts(userId))
-            }
-            _uiState.update {
-                it.copy(isLoading = false)
+            try {
+                loanRequestRepository.deleteDraft(id)
+                _uiState.update {
+                    it.copy(carts = loanRequestRepository.getDrafts(userId))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }

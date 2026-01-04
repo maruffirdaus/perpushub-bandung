@@ -188,24 +188,18 @@ private fun ColumnScope.CartSection(
                     CartItem(
                         loanRequest = loanRequest,
                         selectedLibrary = selectedLibrary?.name,
+                        selectedAddress = null,
                         onItemClick = {
                             onNavigate(MainNavKey.BookDetail(loanRequest.book.id))
                         },
                         onSelectLibraryClick = {
                             isLibraryDialogOpen = true
-                            onEvent(
-                                BorrowingEvent.OnLibraryDialogRefresh(
-                                    loanRequest.book.id
-                                )
-                            )
+                            onEvent(BorrowingEvent.OnLibraryDialogRefresh(loanRequest.book.id))
                         },
+                        onSelectAddressClick = {},
                         onContinueClick = { dueDate -> },
                         onDeleteClick = {
-                            onEvent(
-                                BorrowingEvent.OnCartDelete(
-                                    loanRequest.id
-                                )
-                            )
+                            onEvent(BorrowingEvent.OnCartDelete(loanRequest.id))
                         },
                         modifier = Modifier.fillMaxWidth(),
                         defaultExpanded = index == 0,

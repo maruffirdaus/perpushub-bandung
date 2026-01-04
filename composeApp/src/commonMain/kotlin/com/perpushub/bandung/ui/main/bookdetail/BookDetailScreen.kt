@@ -34,14 +34,11 @@ import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.AccentButton
 import io.github.composefluent.component.Button
-import io.github.composefluent.component.Icon
 import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ProgressRingSize
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.Text
 import io.github.composefluent.component.rememberScrollbarAdapter
-import io.github.composefluent.icons.Icons
-import io.github.composefluent.icons.regular.BookAdd
 import org.koin.compose.viewmodel.koinViewModel
 import ovh.plrapps.mapcompose.ui.state.MapState
 
@@ -131,10 +128,6 @@ fun BookDetailScreenContent(
                             )
                         }
                     ) {
-                        Icon(
-                            imageVector = Icons.Regular.BookAdd,
-                            contentDescription = "Pinjam"
-                        )
                         Text("Pinjam")
                     }
                 }
