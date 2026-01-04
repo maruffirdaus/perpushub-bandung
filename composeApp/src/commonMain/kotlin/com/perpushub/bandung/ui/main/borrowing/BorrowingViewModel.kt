@@ -73,12 +73,7 @@ class BorrowingViewModel(
             }
             try {
                 _uiState.update {
-                    it.copy(
-                        libraries = libraryRepository.getLibraries(),
-                        addresses = sessionManager.session.value?.userId?.let { userId ->
-                            userRepository.getAddresses(userId)
-                        } ?: listOf()
-                    )
+                    it.copy(libraries = libraryRepository.getLibraries())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -94,10 +89,17 @@ class BorrowingViewModel(
         when (event) {
             is BorrowingEvent.OnSelectedTabChange -> changeSelectedTab(event.tab)
             is BorrowingEvent.OnCartsRefresh -> refreshCarts()
-            is BorrowingEvent.OnRequestsRefresh -> {}
+            is BorrowingEvent.OnRequestsRefresh -> refreshRequests()
             is BorrowingEvent.OnDeliveriesRefresh -> {}
             is BorrowingEvent.OnLoansRefresh -> {}
             is BorrowingEvent.OnLibraryDialogRefresh -> refreshLibraryDialog(event.bookId)
+            is BorrowingEvent.OnAddressPickerDialogRefresh -> refreshAddressPickerDialog()
+            is BorrowingEvent.OnSubmitLoanRequest -> submitLoanRequest(
+                event.libraryId,
+                event.addressId,
+                event.dueDate
+            )
+
             is BorrowingEvent.OnCartDelete -> deleteCart(event.id)
         }
     }
@@ -129,6 +131,27 @@ class BorrowingViewModel(
         }
     }
 
+    private fun refreshRequests() {
+        val userId = sessionManager.session.value?.userId ?: return
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            try {
+                _uiState.update {
+                    it.copy(requests = loanRequestRepository.getSubmitted(userId))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
     private fun refreshLibraryDialog(bookId: Int) {
         viewModelScope.launch {
             _uiState.update {
@@ -143,6 +166,49 @@ class BorrowingViewModel(
             } finally {
                 _uiState.update {
                     it.copy(isLibraryDialogLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun refreshAddressPickerDialog() {
+        val userId = sessionManager.session.value?.userId ?: return
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isAddressPickerDialogLoading = true)
+            }
+            try {
+                _uiState.update {
+                    it.copy(addresses = userRepository.getAddresses(userId))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isAddressPickerDialogLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun submitLoanRequest(libraryId: Int, addressId: Int, dueDate: String) {
+        val userId = sessionManager.session.value?.userId ?: return
+
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            try {
+                loanRequestRepository.submitDraft(userId, libraryId, addressId, dueDate)
+                _uiState.update {
+                    it.copy(carts = loanRequestRepository.getDrafts(userId))
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
                 }
             }
         }

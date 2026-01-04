@@ -361,7 +361,6 @@ private fun LibraryItem(
                 FluentTheme.colors.system.critical
             }
 
-
             Icon(
                 imageVector = if (isAvailable) Icons.Regular.CheckmarkCircle else Icons.Regular.Warning,
                 contentDescription = null,

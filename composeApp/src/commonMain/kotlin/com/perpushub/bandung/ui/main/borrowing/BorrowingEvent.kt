@@ -9,5 +9,11 @@ sealed class BorrowingEvent {
     object OnDeliveriesRefresh : BorrowingEvent()
     object OnLoansRefresh : BorrowingEvent()
     class OnLibraryDialogRefresh(val bookId: Int) : BorrowingEvent()
+    object OnAddressPickerDialogRefresh : BorrowingEvent()
+    class OnSubmitLoanRequest(
+        val libraryId: Int,
+        val addressId: Int,
+        val dueDate: String
+    ) : BorrowingEvent()
     class OnCartDelete(val id: Int) : BorrowingEvent()
 }

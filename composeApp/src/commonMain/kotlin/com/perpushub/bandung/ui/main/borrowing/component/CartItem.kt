@@ -180,7 +180,7 @@ fun CartItem(
                         it.weight(1f)
                     }
                 },
-                disabled = selectedLibrary == null || selectedDueDate == null
+                disabled = selectedLibrary == null || selectedAddress == null || selectedDueDate == null
             ) {
                 Text("Lanjutkan")
             }

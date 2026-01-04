@@ -28,7 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
+import com.perpushub.bandung.common.model.Address
 import com.perpushub.bandung.common.model.LibraryDetail
+import com.perpushub.bandung.common.model.LoanRequest
+import com.perpushub.bandung.ui.main.borrowing.component.AddressPickerDialog
 import com.perpushub.bandung.ui.main.borrowing.component.CartItem
 import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
 import com.perpushub.bandung.ui.main.common.component.LibraryDialog
@@ -131,9 +134,20 @@ fun BorrowingScreenContent(
                     mapState = mapState
                 )
 
-                BorrowTab.REQUESTS -> {}
-                BorrowTab.DELIVERY -> {}
-                BorrowTab.BORROWED -> {}
+                BorrowTab.REQUESTS -> RequestsSection(
+                    requests = uiState.requests,
+                    onNavigate = onNavigate
+                )
+
+                BorrowTab.DELIVERY -> DeliverySection(
+                    deliveries = uiState.deliveries,
+                    onNavigate = onNavigate
+                )
+
+                BorrowTab.BORROWED -> BorrowedSection(
+                    loans = uiState.loans,
+                    onNavigate = onNavigate
+                )
             }
         }
     }
@@ -170,6 +184,9 @@ private fun ColumnScope.CartSection(
                     var selectedLibrary: LibraryDetail? by remember { mutableStateOf(null) }
                     var isLibraryDialogOpen by remember { mutableStateOf(false) }
 
+                    var selectedAddress: Address? by remember { mutableStateOf(null) }
+                    var isAddressDialogOpen by remember { mutableStateOf(false) }
+
                     LibraryDialog(
                         title = "Pilih perpustakaan",
                         bookCopies = uiState.bookCopies,
@@ -185,10 +202,25 @@ private fun ColumnScope.CartSection(
                         loading = uiState.isLibraryDialogLoading
                     )
 
+                    AddressPickerDialog(
+                        addresses = uiState.addresses,
+                        visible = isAddressDialogOpen,
+                        onSelectClick = {
+                            selectedAddress = it
+                        },
+                        onAddAddressClick = {
+                            onNavigate(MainNavKey.Profile)
+                        },
+                        onDismissRequest = {
+                            isAddressDialogOpen = false
+                        },
+                        loading = uiState.isAddressPickerDialogLoading
+                    )
+
                     CartItem(
                         loanRequest = loanRequest,
                         selectedLibrary = selectedLibrary?.name,
-                        selectedAddress = null,
+                        selectedAddress = selectedAddress?.label,
                         onItemClick = {
                             onNavigate(MainNavKey.BookDetail(loanRequest.book.id))
                         },
@@ -196,8 +228,24 @@ private fun ColumnScope.CartSection(
                             isLibraryDialogOpen = true
                             onEvent(BorrowingEvent.OnLibraryDialogRefresh(loanRequest.book.id))
                         },
-                        onSelectAddressClick = {},
-                        onContinueClick = { dueDate -> },
+                        onSelectAddressClick = {
+                            isAddressDialogOpen = true
+                            onEvent(BorrowingEvent.OnAddressPickerDialogRefresh)
+                        },
+                        onContinueClick = { dueDate ->
+                            val library = selectedLibrary
+                            val address = selectedAddress
+
+                            if (library == null || address == null) return@CartItem
+
+                            onEvent(
+                                BorrowingEvent.OnSubmitLoanRequest(
+                                    library.id,
+                                    address.id,
+                                    dueDate
+                                )
+                            )
+                        },
                         onDeleteClick = {
                             onEvent(BorrowingEvent.OnCartDelete(loanRequest.id))
                         },
@@ -206,6 +254,99 @@ private fun ColumnScope.CartSection(
                         alternate = index % 2 == 0
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.RequestsSection(
+    requests: List<LoanRequest>,
+    onNavigate: (NavKey) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+
+    ScrollbarContainer(
+        adapter = rememberScrollbarAdapter(lazyListState),
+        modifier = Modifier.weight(1f)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                bottom = 32.dp
+            )
+        ) {
+            if (requests.isEmpty()) {
+                item {
+                    Text("Belum ada pengajuan buku.")
+                }
+            } else {
+
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.DeliverySection(
+    deliveries: List<String>,
+    onNavigate: (NavKey) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+
+    ScrollbarContainer(
+        adapter = rememberScrollbarAdapter(lazyListState),
+        modifier = Modifier.weight(1f)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                bottom = 32.dp
+            )
+        ) {
+            if (deliveries.isEmpty()) {
+                item {
+                    Text("Belum ada buku yang dikirim.")
+                }
+            } else {
+
+            }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.BorrowedSection(
+    loans: List<String>,
+    onNavigate: (NavKey) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+
+    ScrollbarContainer(
+        adapter = rememberScrollbarAdapter(lazyListState),
+        modifier = Modifier.weight(1f)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(
+                start = 32.dp,
+                end = 32.dp,
+                bottom = 32.dp
+            )
+        ) {
+            if (loans.isEmpty()) {
+                item {
+                    Text("Belum ada buku yang dipinjam.")
+                }
+            } else {
+
             }
         }
     }

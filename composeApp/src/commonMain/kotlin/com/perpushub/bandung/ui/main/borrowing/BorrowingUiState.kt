@@ -14,7 +14,8 @@ data class BorrowingUiState(
     val loans: List<String> = listOf(),
     val bookCopies: List<BookCopy> = listOf(),
     val libraries: List<LibraryDetail> = listOf(),
-    val addresses: List<Address> = listOf(),
     val isLibraryDialogLoading: Boolean = false,
+    val addresses: List<Address> = listOf(),
+    val isAddressPickerDialogLoading: Boolean = false,
     val isLoading: Boolean = false
 )
