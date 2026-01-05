@@ -2,7 +2,7 @@ package com.perpushub.bandung.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.perpushub.bandung.service.SessionManager
+import com.perpushub.bandung.data.repository.AuthRepository
 import com.perpushub.bandung.ui.common.extension.isValidEmail
 import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val sessionManager: SessionManager,
+    private val authRepository: AuthRepository,
     private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -60,7 +60,7 @@ class LoginViewModel(
                 it.copy(isLoading = true)
             }
             try {
-                sessionManager.login(uiState.value.email, uiState.value.password)
+                authRepository.login(uiState.value.email, uiState.value.password)
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
             } finally {

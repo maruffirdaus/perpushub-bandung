@@ -1,12 +1,13 @@
 package com.perpushub.bandung.data.repository
 
 import com.perpushub.bandung.common.model.LibraryDetail
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
+import com.perpushub.bandung.data.remote.LibraryService
 
-class LibraryRepository {
+class LibraryRepository(
+    private val service: LibraryService
+) {
     suspend fun getLibraries(): List<LibraryDetail> {
-        delay(0.25.seconds)
-        return LibraryDetail.dummies.sortedBy { it.name }
+        val response = service.getLibraries()
+        return response.data ?: throw Exception(response.message)
     }
 }

@@ -2,15 +2,15 @@ package com.perpushub.bandung.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.perpushub.bandung.data.repository.AuthRepository
 import com.perpushub.bandung.data.repository.UserRepository
-import com.perpushub.bandung.service.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val sessionManager: SessionManager,
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState())
@@ -18,10 +18,10 @@ class MainViewModel(
 
     init {
         viewModelScope.launch {
-            sessionManager.session.collect { session ->
-                if (session?.userId != null) {
+            authRepository.currentUserId.collect { userId ->
+                if (userId != null) {
                     _uiState.update {
-                        it.copy(user = userRepository.getUser(session.userId))
+                        it.copy(user = userRepository.getUser(userId))
                     }
                 } else {
                     _uiState.update {
@@ -40,7 +40,7 @@ class MainViewModel(
 
     private fun logout() {
         viewModelScope.launch {
-            sessionManager.logout()
+            authRepository.logout()
         }
     }
 }

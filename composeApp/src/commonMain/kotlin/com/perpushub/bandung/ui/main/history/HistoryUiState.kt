@@ -1,6 +1,8 @@
 package com.perpushub.bandung.ui.main.history
 
+import com.perpushub.bandung.common.model.Loan
+
 data class HistoryUiState(
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val loans: List<Loan> = emptyList(),
+    val isLoading: Boolean = false
 )

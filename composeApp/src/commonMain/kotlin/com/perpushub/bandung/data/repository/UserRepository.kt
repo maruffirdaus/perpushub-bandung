@@ -3,59 +3,58 @@ package com.perpushub.bandung.data.repository
 import com.perpushub.bandung.common.model.Address
 import com.perpushub.bandung.common.model.AddressInput
 import com.perpushub.bandung.common.model.User
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
+import com.perpushub.bandung.data.remote.UserService
+import com.perpushub.bandung.data.remote.model.request.AddEditAddressRequest
 
-class UserRepository {
+class UserRepository(
+    private val service: UserService
+) {
     suspend fun getUser(id: Int): User? {
-        delay(0.25.seconds)
-        return User.dummies[id]
+        val response = service.getUser(id)
+        return response.data
     }
 
-    suspend fun addAddress(userId: Int, input: AddressInput) {
-        delay(0.25.seconds)
-        Address.dummies[userId] = Address.dummies[userId]
-            ?.plus(
-                Address(
-                    id = Address.dummies[userId]?.size ?: 0,
-                    userId = userId,
-                    label = input.label,
-                    recipientName = input.recipientName,
-                    phoneNumber = input.phoneNumber,
-                    addressLine = input.addressLine,
-                    city = input.city,
-                    province = input.province,
-                    postalCode = input.postalCode
-                )
-            ) ?: listOf()
+    suspend fun addAddress(input: AddressInput) {
+        val request = AddEditAddressRequest(
+            label = input.label,
+            recipientName = input.recipientName,
+            phoneNumber = input.phoneNumber,
+            addressLine = input.addressLine,
+            city = input.city,
+            province = input.province,
+            postalCode = input.postalCode
+        )
+        val response = service.addAddress(request)
+        if (response.status != "success") {
+            throw Exception(response.message)
+        }
     }
 
-    suspend fun getAddresses(userId: Int): List<Address> {
-        delay(0.25.seconds)
-        return Address.dummies[userId] ?: listOf()
+    suspend fun getAddresses(): List<Address> {
+        val response = service.getAddresses()
+        return response.data ?: throw Exception(response.message)
     }
 
-    suspend fun editAddress(userId: Int, addressId: Int, input: AddressInput) {
-        delay(0.25.seconds)
-        Address.dummies[userId] = Address.dummies[userId]?.map { address ->
-            if (address.id == addressId) {
-                address.copy(
-                    label = input.label,
-                    recipientName = input.recipientName,
-                    phoneNumber = input.phoneNumber,
-                    addressLine = input.addressLine,
-                    city = input.city,
-                    province = input.province,
-                    postalCode = input.postalCode
-                )
-            } else {
-                address
-            }
-        } ?: listOf()
+    suspend fun editAddress(addressId: Int, input: AddressInput) {
+        val request = AddEditAddressRequest(
+            label = input.label,
+            recipientName = input.recipientName,
+            phoneNumber = input.phoneNumber,
+            addressLine = input.addressLine,
+            city = input.city,
+            province = input.province,
+            postalCode = input.postalCode
+        )
+        val response = service.editAddress(addressId, request)
+        if (response.status != "success") {
+            throw Exception(response.message)
+        }
     }
 
-    suspend fun deleteAddress(userId: Int, addressId: Int) {
-        delay(0.25.seconds)
-        Address.dummies[userId] = Address.dummies[userId]?.filter { it.id != addressId } ?: listOf()
+    suspend fun deleteAddress(addressId: Int) {
+        val response = service.deleteAddress(addressId)
+        if (response.status != "success") {
+            throw Exception(response.message)
+        }
     }
 }

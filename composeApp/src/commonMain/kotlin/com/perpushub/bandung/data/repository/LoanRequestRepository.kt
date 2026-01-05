@@ -1,50 +1,44 @@
 package com.perpushub.bandung.data.repository
 
-import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.common.model.LoanRequest
-import com.perpushub.bandung.common.model.LoanRequestStatus
-import kotlinx.coroutines.delay
-import ovh.plrapps.mapcompose.utils.removeFirst
-import kotlin.time.Duration.Companion.seconds
+import com.perpushub.bandung.common.model.LoanRequestDetail
+import com.perpushub.bandung.data.remote.LoanRequestService
+import com.perpushub.bandung.data.remote.model.request.AddDraftRequest
+import com.perpushub.bandung.data.remote.model.request.SubmitDraftRequest
 
-class LoanRequestRepository {
-    suspend fun addDraft(userId: Int, bookId: Int): Int {
-        delay(0.25.seconds)
-        LoanRequest.dummies += LoanRequest(
-            id = LoanRequest.dummies.size,
-            userId = userId,
-            book = Book.dummies[bookId],
-            status = LoanRequestStatus.DRAFT
-        )
-        return LoanRequest.dummies.lastIndex
-    }
-
-    suspend fun getDrafts(userId: Int): List<LoanRequest> {
-        delay(0.25.seconds)
-        return LoanRequest.dummies
-            .filter { it.userId == userId && it.status == LoanRequestStatus.DRAFT }
-            .reversed()
-    }
-
-    suspend fun deleteDraft(id: Int) {
-        delay(0.25.seconds)
-        LoanRequest.dummies.removeFirst { it.id == id }
-    }
-
-    suspend fun submitDraft(id: Int, libraryId: Int, addressId: Int, dueDate: String) {
-        delay(0.25.seconds)
-        val request = LoanRequest.dummies.first { it.id == id }
-        val index = LoanRequest.dummies.indexOf(request)
-        if (index != -1) {
-            LoanRequest.dummies[index] = request.copy(status = LoanRequestStatus.PENDING)
+class LoanRequestRepository(
+    private val service: LoanRequestService
+) {
+    suspend fun addDraft(bookId: Int) {
+        val request = AddDraftRequest(bookId)
+        val response = service.addDraft(request)
+        if (response.status != "success") {
+            throw Exception(response.message)
         }
     }
 
-    suspend fun getSubmitted(userId: Int): List<LoanRequest> {
-        delay(0.25.seconds)
-        return LoanRequest.dummies
-            .filter { it.userId == userId }
-            .filterNot { it.status == LoanRequestStatus.DRAFT }
-            .reversed()
+    suspend fun getDrafts(): List<LoanRequest> {
+        val response = service.getDrafts()
+        return response.data ?: throw Exception(response.message)
+    }
+
+    suspend fun deleteDraft(id: Int) {
+        val response = service.deleteDraft(id)
+        if (response.status != "success") {
+            throw Exception(response.message)
+        }
+    }
+
+    suspend fun submitDraft(id: Int, libraryId: Int, addressId: Int, dueDate: String) {
+        val request = SubmitDraftRequest(libraryId, addressId, dueDate)
+        val response = service.submitDraft(id, request)
+        if (response.status != "success") {
+            throw Exception(response.message)
+        }
+    }
+
+    suspend fun getSubmitted(): List<LoanRequestDetail> {
+        val response = service.getSubmitted()
+        return response.data ?: throw Exception(response.message)
     }
 }

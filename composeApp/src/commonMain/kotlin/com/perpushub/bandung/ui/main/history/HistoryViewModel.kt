@@ -1,14 +1,17 @@
 package com.perpushub.bandung.ui.main.history
 
 import androidx.lifecycle.ViewModel
-import com.perpushub.bandung.service.SessionManager
+import androidx.lifecycle.viewModelScope
+import com.perpushub.bandung.data.repository.LoanRepository
+import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class HistoryViewModel(
-    private val sessionManager: SessionManager,
+    private val loanRepository: LoanRepository,
     private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -16,13 +19,25 @@ class HistoryViewModel(
 
     fun onEvent(event: HistoryEvent) {
         when (event) {
-            is HistoryEvent.OnErrorMessageClear -> clearErrorMessage()
+            is HistoryEvent.OnLoansRefresh -> refreshLoans()
         }
     }
 
-    private fun clearErrorMessage() {
-        _uiState.update {
-            it.copy(errorMessage = null)
+    private fun refreshLoans() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            try {
+                _uiState.update {
+                    it.copy(loans = loanRepository.getHistory())
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            }
+            _uiState.update {
+                it.copy(isLoading = false)
+            }
         }
     }
 }

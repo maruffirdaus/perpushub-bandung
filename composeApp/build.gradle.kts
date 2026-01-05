@@ -19,7 +19,8 @@ val localProperties = Properties().apply {
 
 buildConfig {
     packageName("com.perpushub.bandung")
-    buildConfigField("API_KEY", localProperties.getProperty("api.key") ?: System.getenv("API_KEY"))
+    buildConfigField("BACKEND_BASE_URL", localProperties.getProperty("backend.base.url") ?: System.getenv("BACKEND_BASE_URL"))
+    buildConfigField("MAPTILER_API_KEY", localProperties.getProperty("maptiler.api.key") ?: System.getenv("MAPTILER_API_KEY"))
 }
 
 kotlin {
@@ -80,8 +81,13 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.mapcompose)
+            implementation(libs.mutliplatformSettings.noArg)
             implementation(project.dependencies.platform(libs.koin.bom))
         }
         commonTest.dependencies {
@@ -91,6 +97,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.ktor.client.java)
+            implementation(libs.slf4j.simple)
             implementation(libs.windowStyler)
         }
         webMain.dependencies {

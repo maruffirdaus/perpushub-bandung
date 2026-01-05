@@ -2,10 +2,10 @@ package com.perpushub.bandung.ui.main.bookdetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.perpushub.bandung.data.repository.AuthRepository
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
 import com.perpushub.bandung.data.repository.LoanRequestRepository
-import com.perpushub.bandung.service.SessionManager
 import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import com.perpushub.bandung.ui.main.common.util.GeoUtil
@@ -23,7 +23,7 @@ import kotlin.math.pow
 
 class BookDetailViewModel(
     private val id: Int,
-    private val sessionManager: SessionManager,
+    private val authRepository: AuthRepository,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
     private val loanRequestRepository: LoanRequestRepository,
@@ -38,6 +38,8 @@ class BookDetailViewModel(
             SharingStarted.WhileSubscribed(5000L),
             BookDetailUiState()
         )
+
+    private var currentUserId: Int? = null
 
     var mapState: MapState
 
@@ -64,9 +66,10 @@ class BookDetailViewModel(
         }
 
         viewModelScope.launch {
-            sessionManager.session.collect { session ->
+            authRepository.currentUserId.collect { userId ->
+                currentUserId = userId
                 _uiState.update {
-                    it.copy(isLoggedIn = session != null)
+                    it.copy(isLoggedIn = userId != null)
                 }
             }
         }
@@ -131,7 +134,7 @@ class BookDetailViewModel(
     }
 
     private fun borrow(onSuccess: () -> Unit) {
-        if (sessionManager.session.value == null) {
+        if (currentUserId == null) {
             uiMessageManager.emitMessage(UiError("Masuk untuk melanjutkan."))
             return
         }
@@ -141,10 +144,8 @@ class BookDetailViewModel(
                 it.copy(isLoading = true)
             }
             try {
-                sessionManager.session.value?.userId?.let { userId ->
-                    loanRequestRepository.addDraft(userId, id)
-                    onSuccess()
-                }
+                loanRequestRepository.addDraft(id)
+                onSuccess()
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
             } finally {

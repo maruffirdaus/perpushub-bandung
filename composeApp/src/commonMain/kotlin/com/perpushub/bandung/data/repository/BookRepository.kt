@@ -3,10 +3,13 @@ package com.perpushub.bandung.data.repository
 import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.common.model.BookCopy
 import com.perpushub.bandung.common.model.BookDetail
+import com.perpushub.bandung.data.remote.BookService
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
-class BookRepository {
+class BookRepository(
+    private val service: BookService
+) {
     suspend fun searchBooks(query: String): List<Book> {
         delay(0.25.seconds)
         return Book.dummies.mapNotNull {
@@ -21,22 +24,22 @@ class BookRepository {
     }
 
     suspend fun getTopBooks(): List<Book> {
-        delay(0.25.seconds)
-        return Book.dummies.shuffled().take(10)
+        val response = service.getTopBooks()
+        return response.data ?: throw Exception(response.message)
     }
 
     suspend fun getRecommendedBooks(): List<Book> {
-        delay(0.25.seconds)
-        return Book.dummies.shuffled().take(15)
+        val response = service.getRecommendedBooks()
+        return response.data ?: throw Exception(response.message)
     }
 
     suspend fun getBookDetail(id: Int): BookDetail? {
-        delay(0.25.seconds)
-        return BookDetail.dummies[id]
+        val response = service.getBookDetail(id)
+        return response.data
     }
 
     suspend fun getBookCopies(id: Int): List<BookCopy> {
-        delay(0.25.seconds)
-        return BookCopy.dummies[id] ?: listOf()
+        val response = service.getBookCopies(id)
+        return response.data ?: throw Exception(response.message)
     }
 }

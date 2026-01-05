@@ -43,7 +43,9 @@ fun MainNavDisplay(
                 )
             }
             entry<MainNavKey.History> {
-                HistoryScreen()
+                HistoryScreen(
+                    onNavigate = onNavigate
+                )
             }
             entry<MainNavKey.Profile> {
                 ProfileScreen()

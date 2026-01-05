@@ -16,7 +16,7 @@ class MapTilerTileStreamProvider(
         col: Int,
         zoomLvl: Int
     ): RawSource? {
-        val key = BuildConfig.API_KEY
+        val key = BuildConfig.MAPTILER_API_KEY
         val url = "https://api.maptiler.com/maps/streets-v4/256/${zoomLvl}/${col}/${row}.png?key=${key}"
         return try {
             client.get(url).bodyAsChannel().readRemaining()

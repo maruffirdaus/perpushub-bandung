@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.common.model.Address
 import com.perpushub.bandung.common.model.AddressInput
+import com.perpushub.bandung.data.repository.AuthRepository
 import com.perpushub.bandung.data.repository.UserRepository
-import com.perpushub.bandung.service.SessionManager
 import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import com.perpushub.bandung.ui.main.profile.model.ProfileTab
@@ -15,12 +15,22 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
-    private val sessionManager: SessionManager,
+    private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState = _uiState.asStateFlow()
+
+    private var currentUserId: Int? = null
+
+    init {
+        viewModelScope.launch {
+            authRepository.currentUserId.collect { userId ->
+                currentUserId = userId
+            }
+        }
+    }
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
@@ -41,7 +51,7 @@ class ProfileViewModel(
     }
 
     private fun refreshUser() {
-        val userId = sessionManager.session.value?.userId ?: return
+        val userId = currentUserId ?: return
 
         viewModelScope.launch {
             _uiState.update {
@@ -62,15 +72,13 @@ class ProfileViewModel(
     }
 
     private fun refreshAddresses() {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             try {
                 _uiState.update {
-                    it.copy(addresses = userRepository.getAddresses(userId))
+                    it.copy(addresses = userRepository.getAddresses())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -101,8 +109,6 @@ class ProfileViewModel(
     }
 
     private fun saveAddress(input: AddressInput) {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -111,13 +117,13 @@ class ProfileViewModel(
                 val addressToEdit = uiState.value.addressToEdit
 
                 if (addressToEdit == null) {
-                    userRepository.addAddress(userId, input)
+                    userRepository.addAddress(input)
                 } else {
-                    userRepository.editAddress(userId, addressToEdit.id, input)
+                    userRepository.editAddress(addressToEdit.id, input)
                 }
 
                 _uiState.update {
-                    it.copy(addresses = userRepository.getAddresses(userId))
+                    it.copy(addresses = userRepository.getAddresses())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -130,16 +136,14 @@ class ProfileViewModel(
     }
 
     private fun deleteAddress(addressId: Int) {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             try {
-                userRepository.deleteAddress(userId, addressId)
+                userRepository.deleteAddress(addressId)
                 _uiState.update {
-                    it.copy(addresses = userRepository.getAddresses(userId))
+                    it.copy(addresses = userRepository.getAddresses())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))

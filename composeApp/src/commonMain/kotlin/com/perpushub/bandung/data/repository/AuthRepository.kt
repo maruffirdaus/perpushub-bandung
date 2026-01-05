@@ -1,39 +1,33 @@
 package com.perpushub.bandung.data.repository
 
-import com.perpushub.bandung.common.model.Session
-import com.perpushub.bandung.common.model.User
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
+import com.perpushub.bandung.data.local.SessionService
+import com.perpushub.bandung.data.remote.AuthService
+import com.perpushub.bandung.data.remote.model.request.LoginRequest
+import com.perpushub.bandung.data.remote.model.request.RegisterRequest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class AuthRepository {
-    suspend fun login(email: String, password: String): Session {
-        delay(0.25.seconds)
-        val user = User.dummies.find { it.email == email }
-        if (user == null) {
-            throw Exception("Email atau kata sandi salah. Silakan coba lagi.")
-        }
-        return Session(
-            userId = user.id,
-            accessToken = "access_token",
-            refreshToken = "refresh_token"
-        )
+class AuthRepository(
+    private val authService: AuthService,
+    private val sessionService: SessionService
+) {
+    val currentUserId: Flow<Int?> = sessionService.session.map { it?.userId }
+
+    suspend fun login(email: String, password: String) {
+        val request = LoginRequest(email, password)
+        val response = authService.login(request)
+        sessionService.save(response.data ?: throw Exception(response.message))
+    }
+
+    fun logout() {
+        sessionService.clear()
     }
 
     suspend fun register(username: String, fullName: String, email: String, password: String) {
-        delay(0.25.seconds)
-        if (User.dummies.any { it.username == username }) {
-            throw Exception("Username sudah digunakan. Silakan coba lagi.")
+        val request = RegisterRequest(username, fullName, email, password)
+        val response = authService.register(request)
+        if (response.status != "success") {
+            throw Exception(response.message)
         }
-        if (User.dummies.any { it.email == email }) {
-            throw Exception("Email sudah digunakan. Silakan coba lagi.")
-        }
-        User.dummies.add(
-            User(
-                id = User.dummies.size,
-                username = username,
-                fullName = fullName,
-                email = email
-            )
-        )
     }
 }

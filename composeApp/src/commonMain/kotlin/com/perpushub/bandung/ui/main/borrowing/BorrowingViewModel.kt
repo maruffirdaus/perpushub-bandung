@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.perpushub.bandung.data.repository.BookRepository
 import com.perpushub.bandung.data.repository.LibraryRepository
+import com.perpushub.bandung.data.repository.LoanRepository
 import com.perpushub.bandung.data.repository.LoanRequestRepository
 import com.perpushub.bandung.data.repository.UserRepository
-import com.perpushub.bandung.service.SessionManager
 import com.perpushub.bandung.ui.common.messaging.UiError
 import com.perpushub.bandung.ui.common.messaging.UiMessageManager
 import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
@@ -24,11 +24,11 @@ import ovh.plrapps.mapcompose.ui.state.MapState
 import kotlin.math.pow
 
 class BorrowingViewModel(
-    private val sessionManager: SessionManager,
     private val loanRequestRepository: LoanRequestRepository,
     private val bookRepository: BookRepository,
     private val libraryRepository: LibraryRepository,
     private val userRepository: UserRepository,
+    private val loanRepository: LoanRepository,
     private val tileStreamProvider: TileStreamProvider,
     private val uiMessageManager: UiMessageManager
 ) : ViewModel() {
@@ -90,17 +90,19 @@ class BorrowingViewModel(
             is BorrowingEvent.OnSelectedTabChange -> changeSelectedTab(event.tab)
             is BorrowingEvent.OnCartsRefresh -> refreshCarts()
             is BorrowingEvent.OnRequestsRefresh -> refreshRequests()
-            is BorrowingEvent.OnDeliveriesRefresh -> {}
-            is BorrowingEvent.OnLoansRefresh -> {}
+            is BorrowingEvent.OnDeliveriesRefresh -> refreshDeliveries()
+            is BorrowingEvent.OnLoansRefresh -> refreshLoans()
             is BorrowingEvent.OnLibraryDialogRefresh -> refreshLibraryDialog(event.bookId)
             is BorrowingEvent.OnAddressPickerDialogRefresh -> refreshAddressPickerDialog()
             is BorrowingEvent.OnSubmitLoanRequest -> submitLoanRequest(
+                event.id,
                 event.libraryId,
                 event.addressId,
                 event.dueDate
             )
 
             is BorrowingEvent.OnCartDelete -> deleteCart(event.id)
+            is BorrowingEvent.OnBookReceive -> receiveBook(event.id)
         }
     }
 
@@ -111,15 +113,13 @@ class BorrowingViewModel(
     }
 
     private fun refreshCarts() {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             try {
                 _uiState.update {
-                    it.copy(carts = loanRequestRepository.getDrafts(userId))
+                    it.copy(carts = loanRequestRepository.getDrafts())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -132,15 +132,51 @@ class BorrowingViewModel(
     }
 
     private fun refreshRequests() {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             try {
                 _uiState.update {
-                    it.copy(requests = loanRequestRepository.getSubmitted(userId))
+                    it.copy(requests = loanRequestRepository.getSubmitted())
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun refreshDeliveries() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            try {
+                _uiState.update {
+                    it.copy(deliveries = loanRepository.getInDelivery())
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun refreshLoans() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            try {
+                _uiState.update {
+                    it.copy(loans = loanRepository.getBorrowed())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -172,15 +208,13 @@ class BorrowingViewModel(
     }
 
     private fun refreshAddressPickerDialog() {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isAddressPickerDialogLoading = true)
             }
             try {
                 _uiState.update {
-                    it.copy(addresses = userRepository.getAddresses(userId))
+                    it.copy(addresses = userRepository.getAddresses())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -192,17 +226,33 @@ class BorrowingViewModel(
         }
     }
 
-    private fun submitLoanRequest(libraryId: Int, addressId: Int, dueDate: String) {
-        val userId = sessionManager.session.value?.userId ?: return
-
+    private fun submitLoanRequest(id: Int, libraryId: Int, addressId: Int, dueDate: String) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
             }
             try {
-                loanRequestRepository.submitDraft(userId, libraryId, addressId, dueDate)
+                loanRequestRepository.submitDraft(
+                    id,
+                    libraryId,
+                    addressId,
+                    dueDate.let {
+                        val parts = it.split("-")
+                        val month = if (parts[1].toInt() + 1 < 10) {
+                            "0" + (parts[1].toInt() + 1)
+                        } else {
+                            (parts[1].toInt() + 1).toString()
+                        }
+                        val day = if (parts[2].toInt() < 10) {
+                            "0" + parts[2]
+                        } else {
+                            parts[2]
+                        }
+                        parts[0] + "-" + month + "-" + day
+                    }
+                )
                 _uiState.update {
-                    it.copy(carts = loanRequestRepository.getDrafts(userId))
+                    it.copy(carts = loanRequestRepository.getDrafts())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
@@ -215,8 +265,6 @@ class BorrowingViewModel(
     }
 
     private fun deleteCart(id: Int) {
-        val userId = sessionManager.session.value?.userId ?: return
-
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -224,7 +272,27 @@ class BorrowingViewModel(
             try {
                 loanRequestRepository.deleteDraft(id)
                 _uiState.update {
-                    it.copy(carts = loanRequestRepository.getDrafts(userId))
+                    it.copy(carts = loanRequestRepository.getDrafts())
+                }
+            } catch (e: Exception) {
+                uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))
+            } finally {
+                _uiState.update {
+                    it.copy(isLoading = false)
+                }
+            }
+        }
+    }
+
+    private fun receiveBook(id: Int) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isLoading = true)
+            }
+            try {
+                loanRepository.receiveBook(id)
+                _uiState.update {
+                    it.copy(deliveries = loanRepository.getInDelivery())
                 }
             } catch (e: Exception) {
                 uiMessageManager.emitMessage(UiError(e.message ?: "Unknown error."))

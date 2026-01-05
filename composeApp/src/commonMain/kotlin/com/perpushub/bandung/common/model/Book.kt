@@ -1,5 +1,8 @@
 package com.perpushub.bandung.common.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Book(
     val id: Int,
     val title: String,

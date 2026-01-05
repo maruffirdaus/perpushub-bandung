@@ -1,5 +1,8 @@
 package com.perpushub.bandung.common.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Library(
     val id: Int,
     val name: String

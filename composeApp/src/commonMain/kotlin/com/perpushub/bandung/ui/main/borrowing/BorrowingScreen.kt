@@ -30,9 +30,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.perpushub.bandung.common.model.Address
 import com.perpushub.bandung.common.model.LibraryDetail
-import com.perpushub.bandung.common.model.LoanRequest
+import com.perpushub.bandung.common.model.Loan
+import com.perpushub.bandung.common.model.LoanRequestDetail
 import com.perpushub.bandung.ui.main.borrowing.component.AddressPickerDialog
+import com.perpushub.bandung.ui.main.borrowing.component.BorrowedItem
 import com.perpushub.bandung.ui.main.borrowing.component.CartItem
+import com.perpushub.bandung.ui.main.borrowing.component.DeliveryItem
+import com.perpushub.bandung.ui.main.borrowing.component.RequestsItem
 import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
 import com.perpushub.bandung.ui.main.common.component.LibraryDialog
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
@@ -141,6 +145,7 @@ fun BorrowingScreenContent(
 
                 BorrowTab.DELIVERY -> DeliverySection(
                     deliveries = uiState.deliveries,
+                    onEvent = onEvent,
                     onNavigate = onNavigate
                 )
 
@@ -240,6 +245,7 @@ private fun ColumnScope.CartSection(
 
                             onEvent(
                                 BorrowingEvent.OnSubmitLoanRequest(
+                                    loanRequest.id,
                                     library.id,
                                     address.id,
                                     dueDate
@@ -261,7 +267,7 @@ private fun ColumnScope.CartSection(
 
 @Composable
 private fun ColumnScope.RequestsSection(
-    requests: List<LoanRequest>,
+    requests: List<LoanRequestDetail>,
     onNavigate: (NavKey) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
@@ -284,7 +290,16 @@ private fun ColumnScope.RequestsSection(
                     Text("Belum ada pengajuan buku.")
                 }
             } else {
-
+                itemsIndexed(requests) { index, loanRequestDetail ->
+                    RequestsItem(
+                        loanRequestDetail = loanRequestDetail,
+                        onClick = {
+                            onNavigate(MainNavKey.BookDetail(loanRequestDetail.book.id))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        alternate = index % 2 == 0
+                    )
+                }
             }
         }
     }
@@ -292,7 +307,8 @@ private fun ColumnScope.RequestsSection(
 
 @Composable
 private fun ColumnScope.DeliverySection(
-    deliveries: List<String>,
+    deliveries: List<Loan>,
+    onEvent: (BorrowingEvent) -> Unit,
     onNavigate: (NavKey) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
@@ -315,7 +331,19 @@ private fun ColumnScope.DeliverySection(
                     Text("Belum ada buku yang dikirim.")
                 }
             } else {
-
+                itemsIndexed(deliveries) { index, loan ->
+                    DeliveryItem(
+                        loan = loan,
+                        onItemClick = {
+                            onNavigate(MainNavKey.BookDetail(loan.book.id))
+                        },
+                        onReceiveBookClick = {
+                            onEvent(BorrowingEvent.OnBookReceive(loan.id))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        alternate = index % 2 == 0
+                    )
+                }
             }
         }
     }
@@ -323,7 +351,7 @@ private fun ColumnScope.DeliverySection(
 
 @Composable
 private fun ColumnScope.BorrowedSection(
-    loans: List<String>,
+    loans: List<Loan>,
     onNavigate: (NavKey) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
@@ -346,7 +374,16 @@ private fun ColumnScope.BorrowedSection(
                     Text("Belum ada buku yang dipinjam.")
                 }
             } else {
-
+                itemsIndexed(loans) { index, loan ->
+                    BorrowedItem(
+                        loan = loan,
+                        onClick = {
+                            onNavigate(MainNavKey.BookDetail(loan.book.id))
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        alternate = index % 2 == 0
+                    )
+                }
             }
         }
     }
