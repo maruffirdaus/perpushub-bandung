@@ -14,6 +14,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,6 +24,7 @@ import com.perpushub.bandung.ui.auth.component.AuthCover
 import com.perpushub.bandung.ui.navigation.AppNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
+import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.ScrollbarContainer
 import io.github.composefluent.component.rememberScrollbarAdapter
 import org.koin.compose.viewmodel.koinViewModel
@@ -56,53 +58,62 @@ fun AuthScreenContent(
         if (uiState.isLoggedIn) onNavigate(AppNavKey.Main)
     }
 
-    if (isAtLeastMediumBreakpoint) {
-        val scrollState = rememberScrollState()
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(FluentTheme.colors.background.layer.alt)
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            AuthCover(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-            )
-            ScrollbarContainer(
-                adapter = rememberScrollbarAdapter(scrollState),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                ) {
-                    navDisplay()
-                }
-            }
+            ProgressRing()
         }
     } else {
-        val scrollState = rememberScrollState()
+        if (isAtLeastMediumBreakpoint) {
+            val scrollState = rememberScrollState()
 
-        ScrollbarContainer(
-            adapter = rememberScrollbarAdapter(scrollState),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(FluentTheme.colors.background.layer.alt)
-                    .verticalScroll(scrollState)
             ) {
                 AuthCover(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(3f / 2f)
+                        .fillMaxHeight()
+                        .weight(1f)
                 )
-                navDisplay()
+                ScrollbarContainer(
+                    adapter = rememberScrollbarAdapter(scrollState),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(scrollState)
+                    ) {
+                        navDisplay()
+                    }
+                }
+            }
+        } else {
+            val scrollState = rememberScrollState()
+
+            ScrollbarContainer(
+                adapter = rememberScrollbarAdapter(scrollState),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(FluentTheme.colors.background.layer.alt)
+                        .verticalScroll(scrollState)
+                ) {
+                    AuthCover(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(3f / 2f)
+                    )
+                    navDisplay()
+                }
             }
         }
     }
@@ -113,7 +124,9 @@ fun AuthScreenContent(
 private fun AuthScreenPreview() {
     AppTheme {
         AuthScreenContent(
-            uiState = AuthUiState(),
+            uiState = AuthUiState(
+                isLoading = false
+            ),
             navDisplay = {},
             onNavigate = {}
         )

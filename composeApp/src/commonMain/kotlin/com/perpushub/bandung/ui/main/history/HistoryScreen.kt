@@ -3,6 +3,7 @@ package com.perpushub.bandung.ui.main.history
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.perpushub.bandung.ui.main.common.component.Header
+import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.main.history.component.LoanItem
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
@@ -54,7 +56,10 @@ fun HistoryScreenContent(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Header("Riwayat")
+        Header(
+            text = "Riwayat",
+            modifier = Modifier.alignHorizontalSpace()
+        )
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier
@@ -72,7 +77,9 @@ fun HistoryScreenContent(
                 modifier = Modifier.weight(1f)
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .alignHorizontalSpace()
+                        .fillMaxHeight(),
                     state = lazyListState,
                     contentPadding = PaddingValues(
                         start = 32.dp,

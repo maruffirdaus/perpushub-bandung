@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ import com.perpushub.bandung.common.model.AddressInput
 import com.perpushub.bandung.common.model.User
 import com.perpushub.bandung.ui.main.common.component.ExpanderItem
 import com.perpushub.bandung.ui.main.common.component.ItemRow
+import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.main.profile.component.AddEditAddressDialog
 import com.perpushub.bandung.ui.main.profile.component.AddressItem
 import com.perpushub.bandung.ui.main.profile.model.ProfileTab
@@ -113,7 +115,7 @@ fun ProfileScreenContent(
         Spacer(Modifier.height(32.dp))
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .alignHorizontalSpace()
                 .padding(horizontal = 32.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -137,6 +139,7 @@ fun ProfileScreenContent(
         }
         Spacer(Modifier.height(12.dp))
         LazyRow(
+            modifier = Modifier.alignHorizontalSpace(),
             state = lazyListState,
             contentPadding = PaddingValues(horizontal = 32.dp),
             flingBehavior = rememberSnapFlingBehavior(lazyListState)
@@ -200,7 +203,8 @@ private fun ColumnScope.AccountSection(
     ) {
         BoxWithConstraints(
             modifier = Modifier
-                .fillMaxSize()
+                .alignHorizontalSpace()
+                .fillMaxHeight()
                 .verticalScroll(scrollState)
                 .padding(
                     start = 32.dp,
@@ -308,8 +312,10 @@ private fun ColumnScope.AddressSection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
-            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = 32.dp,
                 end = 32.dp,

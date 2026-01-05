@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +31,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.window.core.layout.WindowSizeClass
 import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.ui.main.common.component.Header
+import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.main.home.component.HorizontalBookItem
 import com.perpushub.bandung.ui.main.home.component.HorizontalList
 import com.perpushub.bandung.ui.main.home.component.VerticalBookItem
@@ -83,6 +85,7 @@ fun HomeScreenContent(
 
         Header(
             text = "Beranda",
+            modifier = Modifier.alignHorizontalSpace(),
             actionsOnly = !isAtLeastMediumBreakpoint,
             actions = {
                 TextField(
@@ -173,7 +176,9 @@ private fun ColumnScope.BookSearchSection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
             contentPadding = PaddingValues(
                 start = 32.dp,
@@ -213,7 +218,9 @@ private fun ColumnScope.BookDiscoverySection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
             contentPadding = PaddingValues(bottom = 32.dp)
         ) {

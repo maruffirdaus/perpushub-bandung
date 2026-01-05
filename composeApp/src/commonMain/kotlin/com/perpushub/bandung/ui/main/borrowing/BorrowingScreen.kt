@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +40,7 @@ import com.perpushub.bandung.ui.main.borrowing.component.DeliveryItem
 import com.perpushub.bandung.ui.main.borrowing.component.RequestsItem
 import com.perpushub.bandung.ui.main.borrowing.model.BorrowTab
 import com.perpushub.bandung.ui.main.common.component.LibraryDialog
+import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
@@ -90,13 +92,16 @@ fun BorrowingScreenContent(
         Spacer(Modifier.height(32.dp))
         Text(
             text = "Peminjaman",
-            modifier = Modifier.padding(horizontal = 32.dp),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .padding(horizontal = 32.dp),
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             style = FluentTheme.typography.title
         )
         Spacer(Modifier.height(12.dp))
         LazyRow(
+            modifier = Modifier.alignHorizontalSpace(),
             state = lazyListState,
             contentPadding = PaddingValues(horizontal = 32.dp),
             flingBehavior = rememberSnapFlingBehavior(lazyListState)
@@ -172,7 +177,9 @@ private fun ColumnScope.CartSection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
             contentPadding = PaddingValues(
                 start = 32.dp,
@@ -277,7 +284,9 @@ private fun ColumnScope.RequestsSection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
             contentPadding = PaddingValues(
                 start = 32.dp,
@@ -318,7 +327,9 @@ private fun ColumnScope.DeliverySection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
             contentPadding = PaddingValues(
                 start = 32.dp,
@@ -361,7 +372,9 @@ private fun ColumnScope.BorrowedSection(
         modifier = Modifier.weight(1f)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .alignHorizontalSpace()
+                .fillMaxHeight(),
             state = lazyListState,
             contentPadding = PaddingValues(
                 start = 32.dp,

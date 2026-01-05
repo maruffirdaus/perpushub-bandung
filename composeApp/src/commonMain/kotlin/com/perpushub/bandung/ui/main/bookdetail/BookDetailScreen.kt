@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,7 @@ import com.perpushub.bandung.ui.main.common.component.ExpanderItem
 import com.perpushub.bandung.ui.main.common.component.Header
 import com.perpushub.bandung.ui.main.common.component.ItemRow
 import com.perpushub.bandung.ui.main.common.component.LibraryDialog
+import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.main.common.util.DateUtil
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
@@ -110,6 +112,7 @@ fun BookDetailScreenContent(
                         )
                     }
                 },
+                modifier = Modifier.alignHorizontalSpace(),
                 actions = {
                     Button(
                         onClick = {
@@ -138,7 +141,8 @@ fun BookDetailScreenContent(
             ) {
                 BoxWithConstraints(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .alignHorizontalSpace()
+                        .fillMaxHeight()
                         .verticalScroll(scrollState)
                         .padding(
                             start = 32.dp,

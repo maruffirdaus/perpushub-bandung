@@ -24,9 +24,9 @@ import io.github.composefluent.component.Text
 @Composable
 fun Header(
     text: String,
+    modifier: Modifier = Modifier,
     actionsOnly: Boolean = false,
-    actions: @Composable (RowScope.() -> Unit)? = null,
-    modifier: Modifier = Modifier
+    actions: @Composable (RowScope.() -> Unit)? = null
 ) {
     Header(
         text = {

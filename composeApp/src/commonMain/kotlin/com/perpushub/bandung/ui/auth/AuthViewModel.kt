@@ -17,8 +17,14 @@ class AuthViewModel(
     init {
         viewModelScope.launch {
             authRepository.currentUserId.collect { userId ->
+                val isLoggedIn = userId != null
                 _uiState.update {
-                    it.copy(isLoggedIn = userId != null)
+                    it.copy(isLoggedIn = isLoggedIn)
+                }
+                if (!isLoggedIn) {
+                    _uiState.update {
+                        it.copy(isLoading = false)
+                    }
                 }
             }
         }

@@ -16,7 +16,7 @@ val viewModelModule = module {
     viewModel { AuthViewModel(get()) }
     viewModel { LoginViewModel(get(), get()) }
     viewModel { RegisterViewModel(get(), get()) }
-    viewModel { MainViewModel(get(), get()) }
+    viewModel { MainViewModel(get(), get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { (id: Int) -> BookDetailViewModel(id, get(), get(), get(), get(), get(), get()) }
     viewModel { BorrowingViewModel(get(), get(), get(), get(), get(), get(), get()) }

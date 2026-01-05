@@ -1,11 +1,14 @@
 package com.perpushub.bandung.ui.main
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,6 +26,7 @@ import io.github.composefluent.component.MenuItem
 import io.github.composefluent.component.NavigationDefaults
 import io.github.composefluent.component.NavigationDisplayMode
 import io.github.composefluent.component.NavigationView
+import io.github.composefluent.component.ProgressRing
 import io.github.composefluent.component.Text
 import io.github.composefluent.component.rememberNavigationState
 import io.github.composefluent.icons.Icons
@@ -75,166 +79,178 @@ fun MainScreenContent(
     val dialog = LocalContentDialog.current
     val scope = rememberCoroutineScope()
 
-    NavigationView(
-        menuItems = {
-            item {
-                val isSelected = backStack.lastOrNull() is MainNavKey.Home
+    if (uiState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            ProgressRing()
+        }
+    } else {
+        NavigationView(
+            menuItems = {
+                item {
+                    val isSelected = backStack.lastOrNull() is MainNavKey.Home
 
-                MenuItem(
-                    selected = isSelected,
-                    onClick = {
-                        if (!isSelected) onNavigate(MainNavKey.Home)
-                    },
-                    text = {
-                        Text("Beranda")
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = Icons.Regular.Home,
-                            contentDescription = "Beranda"
+                    MenuItem(
+                        selected = isSelected,
+                        onClick = {
+                            if (!isSelected) onNavigate(MainNavKey.Home)
+                        },
+                        text = {
+                            Text("Beranda")
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Regular.Home,
+                                contentDescription = "Beranda"
+                            )
+                        }
+                    )
+                }
+                if (uiState.user != null) {
+                    item {
+                        val isSelected = backStack.lastOrNull() is MainNavKey.Borrowing
+
+                        MenuItem(
+                            selected = isSelected,
+                            onClick = {
+                                if (!isSelected) onNavigate(MainNavKey.Borrowing)
+                            },
+                            text = {
+                                Text("Peminjaman")
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Regular.Book,
+                                    contentDescription = "Peminjaman"
+                                )
+                            }
                         )
                     }
-                )
-            }
-            if (uiState.user != null) {
-                item {
-                    val isSelected = backStack.lastOrNull() is MainNavKey.Borrowing
+                    item {
+                        val isSelected = backStack.lastOrNull() is MainNavKey.History
 
-                    MenuItem(
-                        selected = isSelected,
-                        onClick = {
-                            if (!isSelected) onNavigate(MainNavKey.Borrowing)
-                        },
-                        text = {
-                            Text("Peminjaman")
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Regular.Book,
-                                contentDescription = "Peminjaman"
-                            )
-                        }
-                    )
-                }
-                item {
-                    val isSelected = backStack.lastOrNull() is MainNavKey.History
-
-                    MenuItem(
-                        selected = isSelected,
-                        onClick = {
-                            if (!isSelected) onNavigate(MainNavKey.History)
-                        },
-                        text = {
-                            Text("Riwayat")
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Regular.History,
-                                contentDescription = "Riwayat"
-                            )
-                        }
-                    )
-                }
-            }
-        },
-        modifier = Modifier.safeContentPadding(),
-        displayMode = if (isAtLeastExpandedBreakpoint) {
-            NavigationDisplayMode.Left
-        } else if (isAtLeastMediumBreakpoint) {
-            NavigationDisplayMode.LeftCompact
-        } else {
-            NavigationDisplayMode.LeftCollapsed
-        },
-        state = rememberNavigationState(
-            initialExpanded = false
-        ),
-        backButton = if (backButtonEnabled) {
-            {
-                NavigationDefaults.BackButton(
-                    onClick = onNavigateBack,
-                    disabled = backStack.size == 1
-                )
-            }
-        } else {
-            {}
-        },
-        footerItems = {
-            if (uiState.user != null) {
-                item {
-                    val isSelected = backStack.lastOrNull() is MainNavKey.Profile
-
-                    MenuItem(
-                        selected = isSelected,
-                        onClick = {
-                            if (!isSelected) onNavigate(MainNavKey.Profile)
-                        },
-                        text = {
-                            Text(uiState.user.fullName)
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Regular.Person,
-                                contentDescription = "Profil"
-                            )
-                        }
-                    )
-                }
-                item {
-                    MenuItem(
-                        selected = false,
-                        onClick = {
-                            scope.launch {
-                                val result = dialog.show(
-                                    title = "Keluar?",
-                                    contentText = "Anda akan keluar dari akun.",
-                                    primaryButtonText = "Ya",
-                                    closeButtonText = "Tidak",
-                                    size = DialogSize.Min
+                        MenuItem(
+                            selected = isSelected,
+                            onClick = {
+                                if (!isSelected) onNavigate(MainNavKey.History)
+                            },
+                            text = {
+                                Text("Riwayat")
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Regular.History,
+                                    contentDescription = "Riwayat"
                                 )
-                                if (result == ContentDialogButton.Primary) {
-                                    onEvent(MainEvent.OnLogout)
-                                    onNavigate(AppNavKey.Auth)
-                                }
                             }
-                        },
-                        text = {
-                            Text("Keluar")
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Regular.SignOut,
-                                contentDescription = "Keluar"
-                            )
-                        }
+                        )
+                    }
+                }
+            },
+            modifier = Modifier.safeContentPadding(),
+            displayMode = if (isAtLeastExpandedBreakpoint) {
+                NavigationDisplayMode.Left
+            } else if (isAtLeastMediumBreakpoint) {
+                NavigationDisplayMode.LeftCompact
+            } else {
+                NavigationDisplayMode.LeftCollapsed
+            },
+            state = rememberNavigationState(
+                initialExpanded = false
+            ),
+            backButton = if (backButtonEnabled) {
+                {
+                    NavigationDefaults.BackButton(
+                        onClick = onNavigateBack,
+                        disabled = backStack.size == 1
                     )
                 }
             } else {
-                item {
-                    MenuItem(
-                        selected = false,
-                        onClick = {
-                            onNavigate(AppNavKey.Auth)
-                        },
-                        text = {
-                            Text("Masuk atau daftar")
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Regular.Person,
-                                contentDescription = "Masuk atau daftar"
-                            )
-                        }
-                    )
+                {}
+            },
+            footerItems = {
+                if (uiState.user != null) {
+                    item {
+                        val isSelected = backStack.lastOrNull() is MainNavKey.Profile
+
+                        MenuItem(
+                            selected = isSelected,
+                            onClick = {
+                                if (!isSelected) onNavigate(MainNavKey.Profile)
+                            },
+                            text = {
+                                Text(uiState.user.fullName)
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Regular.Person,
+                                    contentDescription = "Profil"
+                                )
+                            }
+                        )
+                    }
+                    item {
+                        MenuItem(
+                            selected = false,
+                            onClick = {
+                                scope.launch {
+                                    val result = dialog.show(
+                                        title = "Keluar?",
+                                        contentText = "Anda akan keluar dari akun.",
+                                        primaryButtonText = "Ya",
+                                        closeButtonText = "Tidak",
+                                        size = DialogSize.Min
+                                    )
+                                    if (result == ContentDialogButton.Primary) {
+                                        onEvent(
+                                            MainEvent.OnLogout {
+                                                onNavigate(AppNavKey.Auth)
+                                            }
+                                        )
+                                    }
+                                }
+                            },
+                            text = {
+                                Text("Keluar")
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Regular.SignOut,
+                                    contentDescription = "Keluar"
+                                )
+                            }
+                        )
+                    }
+                } else {
+                    item {
+                        MenuItem(
+                            selected = false,
+                            onClick = {
+                                onNavigate(AppNavKey.Auth)
+                            },
+                            text = {
+                                Text("Masuk atau daftar")
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Regular.Person,
+                                    contentDescription = "Masuk atau daftar"
+                                )
+                            }
+                        )
+                    }
                 }
-            }
-        },
-        contentPadding = if (isAtLeastMediumBreakpoint) {
-            PaddingValues()
-        } else {
-            PaddingValues(top = 48.dp)
-        },
-    ) {
-        navDisplay()
+            },
+            contentPadding = if (isAtLeastMediumBreakpoint) {
+                PaddingValues()
+            } else {
+                PaddingValues(top = 48.dp)
+            },
+        ) {
+            navDisplay()
+        }
     }
 }
 

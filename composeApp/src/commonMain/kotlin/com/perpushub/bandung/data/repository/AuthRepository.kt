@@ -1,6 +1,7 @@
 package com.perpushub.bandung.data.repository
 
 import com.perpushub.bandung.data.local.SessionService
+import com.perpushub.bandung.data.model.Token
 import com.perpushub.bandung.data.remote.AuthService
 import com.perpushub.bandung.data.remote.model.request.LoginRequest
 import com.perpushub.bandung.data.remote.model.request.RegisterRequest
@@ -19,7 +20,11 @@ class AuthRepository(
         sessionService.save(response.data ?: throw Exception(response.message))
     }
 
-    fun logout() {
+    suspend fun logout() {
+        val response = authService.logout()
+        if (response.status != "success") {
+            throw Exception(response.message)
+        }
         sessionService.clear()
     }
 
@@ -29,5 +34,20 @@ class AuthRepository(
         if (response.status != "success") {
             throw Exception(response.message)
         }
+    }
+
+    suspend fun refreshToken(): Token? {
+        val session = sessionService.session.value
+        if (session != null) {
+            val response = authService.refreshToken(session.refreshToken)
+            val data = response.data
+            if (response.status == "success" && data != null) {
+                sessionService.updateToken(data)
+            } else {
+                sessionService.clear()
+            }
+            return data
+        }
+        return null
     }
 }
