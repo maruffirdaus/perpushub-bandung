@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -89,7 +92,10 @@ fun AddEditAddressDialog(
                             singleLine = true,
                             header = {
                                 Text("Label")
-                            }
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Next
+                            )
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -104,7 +110,10 @@ fun AddEditAddressDialog(
                                 singleLine = true,
                                 header = {
                                     Text("Nama penerima")
-                                }
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Next
+                                )
                             )
                             TextField(
                                 value = input.phoneNumber,
@@ -115,7 +124,10 @@ fun AddEditAddressDialog(
                                 singleLine = true,
                                 header = {
                                     Text("Nomor telepon")
-                                }
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Next
+                                )
                             )
                         }
                         TextField(
@@ -127,7 +139,10 @@ fun AddEditAddressDialog(
                             singleLine = true,
                             header = {
                                 Text("Alamat")
-                            }
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Next
+                            )
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -142,7 +157,10 @@ fun AddEditAddressDialog(
                                 singleLine = true,
                                 header = {
                                     Text("Kota")
-                                }
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Next
+                                )
                             )
                             TextField(
                                 value = input.province,
@@ -153,7 +171,10 @@ fun AddEditAddressDialog(
                                 singleLine = true,
                                 header = {
                                     Text("Provinsi")
-                                }
+                                },
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Next
+                                )
                             )
                         }
                         TextField(
@@ -165,7 +186,25 @@ fun AddEditAddressDialog(
                             singleLine = true,
                             header = {
                                 Text("Kode pos")
-                            }
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    if (input.label.isNotBlank() &&
+                                        input.recipientName.isNotBlank() &&
+                                        input.phoneNumber.isNotBlank() &&
+                                        input.addressLine.isNotBlank() &&
+                                        input.city.isNotBlank() &&
+                                        input.province.isNotBlank() &&
+                                        input.postalCode.isNotBlank()
+                                    ) {
+                                        onSaveClick(input)
+                                        onDismissRequest()
+                                    }
+                                }
+                            )
                         )
                     }
                 }
@@ -185,17 +224,7 @@ fun AddEditAddressDialog(
                     ) {
                         AccentButton(
                             onClick = {
-                                onSaveClick(
-                                    AddressInput(
-                                        label = input.label,
-                                        recipientName = input.recipientName,
-                                        phoneNumber = input.phoneNumber,
-                                        addressLine = input.addressLine,
-                                        city = input.city,
-                                        province = input.province,
-                                        postalCode = input.postalCode
-                                    )
-                                )
+                                onSaveClick(input)
                                 onDismissRequest()
                             },
                             disabled = input.label.isBlank() ||

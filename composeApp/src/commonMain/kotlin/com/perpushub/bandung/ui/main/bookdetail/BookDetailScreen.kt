@@ -85,8 +85,7 @@ fun BookDetailScreenContent(
             mapState = mapState,
             loading = uiState.isLibraryDialogLoading
         )
-
-
+        
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
