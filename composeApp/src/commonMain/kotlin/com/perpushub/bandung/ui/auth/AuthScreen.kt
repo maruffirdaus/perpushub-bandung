@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -89,6 +91,8 @@ fun AuthScreenContent(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(scrollState)
+                            .systemBarsPadding()
+                            .imePadding()
                     ) {
                         navDisplay()
                     }
@@ -106,6 +110,8 @@ fun AuthScreenContent(
                         .fillMaxSize()
                         .background(FluentTheme.colors.background.layer.alt)
                         .verticalScroll(scrollState)
+                        .systemBarsPadding()
+                        .imePadding()
                 ) {
                     AuthCover(
                         modifier = Modifier

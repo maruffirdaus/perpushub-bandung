@@ -21,11 +21,11 @@ jobs:
       - name: Make gradlew Executable
         run: chmod +x gradlew
 
-      - name: Build Web Bundle
+      - name: Build Web Distribution
         env:
           BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
           MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
-        run: ./gradlew wasmJsBrowserProductionWebpack
+        run: ./gradlew wasmJsBrowserDistribution
 
       - name: Checkout Deployment Repository
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
       - name: Copy Build Output
         run: |
           rm -rf deploy/*
-          cp -r build/dist/wasmJs/productionExecutable/* deploy/
+          cp -r composeApp/build/dist/wasmJs/productionExecutable/* deploy/
 
       - name: Commit and Push Deployment
         run: |

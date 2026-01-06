@@ -116,7 +116,7 @@ android {
         minSdk = libs.versions.androidMinSdk.get().toInt()
         targetSdk = libs.versions.androidTargetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.0"
     }
     packaging {
         resources {
@@ -147,10 +147,10 @@ compose.desktop {
         }
         nativeDistributions {
             packageName = "PerpusHub Bandung"
-            packageVersion = "1.0.0"
+            packageVersion = "0.1.0"
 
             modules("java.net.http")
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Msi, TargetFormat.Deb)
             windows {
                 shortcut = true
                 menu = true
