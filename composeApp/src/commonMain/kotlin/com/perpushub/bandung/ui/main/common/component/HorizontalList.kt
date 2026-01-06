@@ -1,4 +1,4 @@
-package com.perpushub.bandung.ui.main.home.component
+package com.perpushub.bandung.ui.main.common.component
 
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Column

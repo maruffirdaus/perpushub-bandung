@@ -1,4 +1,4 @@
-package com.perpushub.bandung.ui.main.home.component
+package com.perpushub.bandung.ui.main.common.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.perpushub.bandung.common.model.Book
-import com.perpushub.bandung.ui.main.common.component.BookCover
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme
 import io.github.composefluent.component.Text

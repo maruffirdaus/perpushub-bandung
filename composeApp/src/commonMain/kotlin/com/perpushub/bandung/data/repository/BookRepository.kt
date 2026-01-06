@@ -28,6 +28,11 @@ class BookRepository(
         return response.data
     }
 
+    suspend fun getSimilarBooks(id: Int): List<Book> {
+        val response = service.getSimilarBooks(id)
+        return response.data ?: throw Exception(response.message)
+    }
+
     suspend fun getBookCopies(id: Int): List<BookCopy> {
         val response = service.getBookCopies(id)
         return response.data ?: throw Exception(response.message)

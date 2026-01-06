@@ -84,6 +84,7 @@ class BookDetailViewModel(
                 _uiState.update {
                     it.copy(
                         book = bookRepository.getBookDetail(id),
+                        similarBooks = bookRepository.getSimilarBooks(id),
                         libraries = libraryRepository.getLibraries()
                     )
                 }

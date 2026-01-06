@@ -33,8 +33,8 @@ import com.perpushub.bandung.common.model.Book
 import com.perpushub.bandung.ui.main.common.component.Header
 import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.main.home.component.HorizontalBookItem
-import com.perpushub.bandung.ui.main.home.component.HorizontalList
-import com.perpushub.bandung.ui.main.home.component.VerticalBookItem
+import com.perpushub.bandung.ui.main.common.component.HorizontalList
+import com.perpushub.bandung.ui.main.common.component.VerticalBookItem
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
 import com.perpushub.bandung.ui.theme.AppTheme
 import io.github.composefluent.FluentTheme

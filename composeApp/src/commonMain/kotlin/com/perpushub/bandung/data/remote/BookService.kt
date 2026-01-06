@@ -36,6 +36,11 @@ class BookService(
         return response.body()
     }
 
+    suspend fun getSimilarBooks(id: Int): GetBooksResponse {
+        val response = client.get("$baseUrl/books/$id/similar")
+        return response.body()
+    }
+
     suspend fun getBookCopies(id: Int): GetBookCopiesResponse {
         val response = client.get("$baseUrl/books/$id/copies")
         return response.body()

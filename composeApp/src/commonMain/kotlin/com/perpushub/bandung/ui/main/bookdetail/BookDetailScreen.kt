@@ -27,8 +27,10 @@ import com.perpushub.bandung.ui.main.common.component.ActionDivider
 import com.perpushub.bandung.ui.main.common.component.BookCover
 import com.perpushub.bandung.ui.main.common.component.ExpanderItem
 import com.perpushub.bandung.ui.main.common.component.Header
+import com.perpushub.bandung.ui.main.common.component.HorizontalList
 import com.perpushub.bandung.ui.main.common.component.ItemRow
 import com.perpushub.bandung.ui.main.common.component.LibraryDialog
+import com.perpushub.bandung.ui.main.common.component.VerticalBookItem
 import com.perpushub.bandung.ui.main.common.extension.alignHorizontalSpace
 import com.perpushub.bandung.ui.main.common.util.DateUtil
 import com.perpushub.bandung.ui.navigation.main.MainNavKey
@@ -85,7 +87,7 @@ fun BookDetailScreenContent(
             mapState = mapState,
             loading = uiState.isLibraryDialogLoading
         )
-        
+
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -143,33 +145,47 @@ fun BookDetailScreenContent(
                         .alignHorizontalSpace()
                         .fillMaxHeight()
                         .verticalScroll(scrollState)
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            bottom = 32.dp
-                        )
                 ) {
-                    if (maxWidth >= 736.dp) {
-                        Row {
-                            BookCoverSection(
-                                book = uiState.book
-                            )
-                            Spacer(Modifier.width(16.dp))
-                            BookAboutSection(
-                                book = uiState.book
+                    Column {
+                        if (this@BoxWithConstraints.maxWidth >= 736.dp) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 32.dp)
+                            ) {
+                                BookCoverSection(
+                                    book = uiState.book
+                                )
+                                Spacer(Modifier.width(16.dp))
+                                BookAboutSection(
+                                    book = uiState.book
+                                )
+                            }
+                        } else {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 32.dp)
+                            ) {
+                                BookCoverSection(
+                                    book = uiState.book,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                BookAboutSection(
+                                    book = uiState.book
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(32.dp))
+                        HorizontalList(
+                            title = "Buku terkait",
+                            items = uiState.similarBooks
+                        ) { book ->
+                            VerticalBookItem(
+                                book = book,
+                                onClick = {
+                                    onNavigate(MainNavKey.BookDetail(book.id))
+                                }
                             )
                         }
-                    } else {
-                        Column {
-                            BookCoverSection(
-                                book = uiState.book,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Spacer(Modifier.height(16.dp))
-                            BookAboutSection(
-                                book = uiState.book
-                            )
-                        }
+                        Spacer(Modifier.height(32.dp))
                     }
                 }
             }
