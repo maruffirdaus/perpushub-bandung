@@ -1,0 +1,57 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ios-build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Make gradlew Executable
+        run: chmod +x gradlew
+
+      - name: Cache Kotlin Native Toolchain
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-konan-
+
+      - name: Build KMP iOS Framework
+        run: ./gradlew :composeApp:assembleXCFramework
+
+      - name: Build Unsigned IPA
+        run: |
+          xcodebuild archive \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Release \
+            -archivePath $RUNNER_TEMP/iosApp.xcarchive \
+            -destination "generic/platform=iOS" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+          mkdir -p $RUNNER_TEMP/ipa/Payload
+          cp -r "$RUNNER_TEMP/iosApp.xcarchive/Products/Applications/iosApp.app" \
+            $RUNNER_TEMP/ipa/Payload/iosApp.app
+          cd $RUNNER_TEMP/ipa
+          zip -r $RUNNER_TEMP/iosApp.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iosApp-unsigned
+          path: ${{ runner.temp }}/iosApp.ipa
+          retention-days: 7
