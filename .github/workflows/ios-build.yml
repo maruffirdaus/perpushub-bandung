@@ -38,8 +38,9 @@ jobs:
       - name: Package IPA
         run: |
           cd $RUNNER_TEMP/iosApp.xcarchive/Products
+          ln -s Applications Payload
           APP_NAME=$(basename Applications/*.app .app)
-          zip -r $RUNNER_TEMP/$APP_NAME.ipa Applications
+          zip -r $RUNNER_TEMP/$APP_NAME.ipa Payload
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
