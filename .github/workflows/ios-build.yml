@@ -20,7 +20,7 @@ jobs:
       - name: Make gradlew Executable
         run: chmod +x gradlew
 
-      - name: Build Unsigned IPA
+      - name: Build iOS Archive
         env:
           BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
           MAPTILER_API_KEY: ${{ secrets.MAPTILER_API_KEY }}
@@ -35,15 +35,15 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGNING_ALLOWED=NO
 
-          mkdir -p $RUNNER_TEMP/ipa/Payload
-          cp -r "$RUNNER_TEMP/iosApp.xcarchive/Products/Applications/iosApp.app" \
-            $RUNNER_TEMP/ipa/Payload/iosApp.app
-          cd $RUNNER_TEMP/ipa
-          zip -r $RUNNER_TEMP/iosApp.ipa Payload
+      - name: Package IPA
+        run: |
+          cd $RUNNER_TEMP/iosApp.xcarchive/Products
+          APP_NAME=$(basename Applications/*.app .app)
+          zip -r $RUNNER_TEMP/$APP_NAME.ipa Applications
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: iosApp-unsigned
-          path: ${{ runner.temp }}/iosApp.ipa
+          name: ${{ github.event.repository.name }}-unsigned
+          path: ${{ runner.temp }}/*.ipa
           retention-days: 7
