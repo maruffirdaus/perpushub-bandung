@@ -3,8 +3,12 @@ name: iOS Build
 on:
   workflow_dispatch:
 
+env:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4096M -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true"
+
 jobs:
   ios-build:
+    name: Build iOS Unsigned IPA
     runs-on: macos-latest
 
     steps:
@@ -17,16 +21,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Make gradlew Executable
-        run: chmod +x gradlew
-
-      - name: Cache Kotlin Native Toolchain
-        uses: actions/cache@v4
-        with:
-          path: ~/.konan
-          key: ${{ runner.os }}-konan-${{ hashFiles('**/*.gradle.kts') }}
-          restore-keys: |
-            ${{ runner.os }}-konan-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Build Unsigned IPA
         run: |
