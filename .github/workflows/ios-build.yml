@@ -28,9 +28,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-konan-
 
-      - name: Build KMP iOS Framework
-        run: ./gradlew :composeApp:assembleXCFramework
-
       - name: Build Unsigned IPA
         run: |
           xcodebuild archive \
